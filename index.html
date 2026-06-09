@@ -1,0 +1,1831 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f1318">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>CraftIQ</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:          #0f1318;
+  --bg-elevated: #161b22;
+  --surface:     #1c2430;
+  --surface-2:   #1e2a38;
+  --accent:      #219CE8;
+  --accent-soft: rgba(33,156,232,0.12);
+  --gold:        #ED9434;
+  --text:        #ffffff;
+  --muted:       #7a9bb8;
+  --separator:   rgba(255,255,255,0.08);
+  --paid:        #4e9e6a;
+  --open:        #219CE8;
+  --overdue:     #c94f4f;
+  --radius:      12px;
+  --radius-sm:   8px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+body{
+  font-family:'Figtree',-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100dvh;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+#app{
+  max-width:430px;
+  margin:0 auto;
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+}
+
+/* ── Header ── */
+.app-header{
+  padding:16px 20px 12px;
+  padding-top:calc(16px + env(safe-area-inset-top));
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  background:var(--bg);
+  z-index:10;
+  border-bottom:1px solid var(--separator);
+}
+
+.app-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;
+  font-weight:700;
+  color:var(--text);
+  letter-spacing:-0.3px;
+}
+.app-logo span{color:var(--accent)}
+
+.icon-btn{
+  width:36px;height:36px;
+  border-radius:50%;
+  background:var(--surface);
+  border:none;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  color:var(--text);
+  transition:background 0.15s;
+}
+.icon-btn:active{background:var(--surface-2)}
+.icon-btn svg{width:18px;height:18px;stroke-width:1.8}
+
+/* ── Tab content ── */
+.tab-content{
+  display:none;
+  flex:1;
+  overflow-y:auto;
+  padding:16px 16px 110px;
+}
+.tab-content.active{display:block}
+
+/* ── Bottom nav ── */
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:430px;
+  background:var(--bg-elevated);
+  border-top:1px solid var(--separator);
+  display:flex;
+  padding-bottom:env(safe-area-inset-bottom);
+  z-index:100;
+}
+
+.nav-item{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:10px 4px 8px;
+  cursor:pointer;
+  color:var(--muted);
+  transition:color 0.15s;
+  border:none;
+  background:none;
+  font-family:'Figtree',sans-serif;
+}
+.nav-item.active{color:var(--accent)}
+.nav-item svg{width:22px;height:22px;stroke-width:1.8}
+.nav-label{font-size:10px;font-weight:500;margin-top:3px}
+
+/* ── Cards ── */
+.card{
+  background:var(--surface);
+  border-radius:var(--radius);
+  padding:14px 16px;
+  margin-bottom:10px;
+  position:relative;
+  overflow:hidden;
+  transition:background 0.15s;
+}
+.card[onclick]{cursor:pointer}
+.card[onclick]:active{background:var(--surface-2)}
+
+.card::before{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:3px;
+  background:var(--muted);
+}
+.card.entwurf::before{background:var(--muted)}
+.card.verschickt::before{background:var(--accent)}
+.card.angenommen::before{background:var(--paid)}
+.card.abgelehnt::before{background:var(--overdue)}
+.card.offen::before{background:var(--open)}
+.card.bezahlt::before{background:var(--paid)}
+
+.card-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:3px}
+.card-subtitle{font-size:13px;color:var(--muted)}
+.card-row{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.card-amount{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;font-weight:700;color:var(--text)
+}
+.card-date{font-size:11px;color:var(--muted);margin-top:6px}
+
+/* ── Badges ── */
+.badge{
+  display:inline-flex;align-items:center;
+  padding:3px 8px;
+  border-radius:20px;
+  font-size:11px;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.4px;
+  white-space:nowrap;
+}
+.badge.entwurf{background:rgba(122,155,184,0.15);color:var(--muted)}
+.badge.verschickt{background:rgba(33,156,232,0.15);color:var(--accent)}
+.badge.angenommen{background:rgba(78,158,106,0.15);color:var(--paid)}
+.badge.abgelehnt{background:rgba(201,79,79,0.15);color:var(--overdue)}
+.badge.offen{background:rgba(33,156,232,0.15);color:var(--accent)}
+.badge.bezahlt{background:rgba(78,158,106,0.15);color:var(--paid)}
+
+/* ── Dashboard ── */
+.greeting{padding:4px 0 16px}
+.greeting-sub{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);margin-bottom:6px}
+.greeting-main{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;line-height:1.1}
+
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:14px 16px}
+.stat-wide{grid-column:1/-1}
+.stat-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:6px}
+.stat-value{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--text);line-height:1}
+.stat-value.accent{color:var(--accent)}
+
+.quick-actions{display:flex;gap:10px;margin-bottom:20px}
+.quick-btn{
+  flex:1;
+  background:var(--accent-soft);
+  border:1px solid rgba(33,156,232,0.2);
+  border-radius:var(--radius);
+  padding:12px;
+  display:flex;align-items:center;gap:8px;
+  cursor:pointer;
+  color:var(--accent);
+  font-size:13px;font-weight:600;
+  font-family:'Figtree',sans-serif;
+  transition:background 0.15s;
+}
+.quick-btn:active{background:rgba(33,156,232,0.2)}
+.quick-btn svg{width:17px;height:17px;flex-shrink:0}
+
+/* ── Section headers ── */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600}
+
+/* ── FAB ── */
+.fab{
+  position:fixed;
+  bottom:calc(72px + env(safe-area-inset-bottom));
+  right:max(16px, calc(50% - 199px));
+  width:54px;height:54px;
+  border-radius:50%;
+  background:var(--accent);
+  border:none;
+  color:white;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 18px rgba(33,156,232,0.45);
+  cursor:pointer;
+  z-index:50;
+  transition:transform 0.15s,box-shadow 0.15s;
+}
+.fab:active{transform:scale(0.93);box-shadow:0 2px 8px rgba(33,156,232,0.3)}
+.fab svg{width:26px;height:26px;stroke-width:2.2}
+.fab.hidden{display:none}
+
+/* ── Filters ── */
+.filter-row{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:2px}
+.filter-row::-webkit-scrollbar{display:none}
+
+.filter-chip{
+  padding:6px 14px;
+  border-radius:20px;
+  font-size:12px;font-weight:600;
+  cursor:pointer;white-space:nowrap;
+  border:1px solid var(--separator);
+  background:transparent;
+  color:var(--muted);
+  font-family:'Figtree',sans-serif;
+  transition:all 0.15s;
+}
+.filter-chip.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+
+/* ── Empty state ── */
+.empty-state{text-align:center;padding:52px 24px;color:var(--muted)}
+.empty-state svg{width:44px;height:44px;margin-bottom:14px;opacity:0.35;display:block;margin-left:auto;margin-right:auto}
+.empty-state p{font-size:14px;line-height:1.6}
+
+/* ── Avatar initials ── */
+.avatar{
+  width:40px;height:40px;flex-shrink:0;
+  border-radius:50%;
+  background:var(--accent-soft);
+  border:1px solid rgba(33,156,232,0.2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--accent);font-weight:700;font-size:15px;
+}
+
+/* ── Modals ── */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.65);
+  z-index:200;
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  backdrop-filter:blur(6px);
+}
+.modal-overlay.open{display:flex}
+
+.modal{
+  background:var(--bg-elevated);
+  border-radius:20px 20px 0 0;
+  width:100%;
+  max-width:430px;
+  max-height:92dvh;
+  overflow-y:auto;
+  padding-bottom:env(safe-area-inset-bottom);
+  animation:slideUp 0.28s cubic-bezier(0.32,0.72,0,1);
+}
+.modal::-webkit-scrollbar{display:none}
+
+@keyframes slideUp{
+  from{transform:translateY(100%);opacity:0.8}
+  to{transform:translateY(0);opacity:1}
+}
+
+.modal-handle{
+  width:36px;height:4px;
+  background:var(--separator);
+  border-radius:2px;
+  margin:12px auto 0;
+}
+
+.modal-header{
+  padding:16px 20px 0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700}
+
+.modal-close{
+  width:32px;height:32px;
+  border-radius:50%;
+  background:var(--surface);
+  border:none;
+  color:var(--muted);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  flex-shrink:0;
+}
+.modal-close svg{width:16px;height:16px}
+
+.modal-body{padding:16px 20px 24px}
+
+/* ── Forms ── */
+.form-group{margin-bottom:14px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.form-label{
+  display:block;
+  font-size:11px;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.5px;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+
+.form-input,.form-select,.form-textarea{
+  width:100%;
+  background:var(--surface);
+  border:1px solid var(--separator);
+  border-radius:var(--radius-sm);
+  padding:10px 12px;
+  font-size:14px;
+  color:var(--text);
+  font-family:'Figtree',sans-serif;
+  transition:border-color 0.15s;
+  outline:none;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-soft);
+}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--muted)}
+.form-select{
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237a9bb8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 10px center;
+}
+.form-select option{background:var(--bg-elevated)}
+.form-textarea{resize:none;min-height:90px;line-height:1.5}
+.ai-textarea{min-height:110px;border-color:rgba(33,156,232,0.25)}
+
+/* ── Buttons ── */
+.btn{
+  width:100%;
+  padding:13px;
+  border-radius:var(--radius);
+  border:none;
+  font-size:15px;font-weight:600;
+  font-family:'Figtree',sans-serif;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:opacity 0.15s,transform 0.1s;
+}
+.btn:active{transform:scale(0.99)}
+.btn svg{width:17px;height:17px}
+.btn-primary{background:var(--accent);color:white}
+.btn-secondary{background:var(--surface-2);color:var(--text)}
+.btn-ghost{background:transparent;color:var(--muted);font-size:14px}
+.btn-danger{background:rgba(201,79,79,0.15);color:var(--overdue)}
+.btn-ai{
+  background:linear-gradient(135deg,#1c2430,#1e2a38);
+  border:1px solid rgba(33,156,232,0.35);
+  color:var(--accent);
+}
+.btn+.btn{margin-top:10px}
+
+/* ── Spinner ── */
+.spinner{
+  width:16px;height:16px;
+  border:2px solid rgba(33,156,232,0.3);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin 0.7s linear infinite;
+  flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Positions table ── */
+.positions-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+.positions-table th{
+  text-align:left;padding:6px 6px;
+  font-size:10px;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.5px;
+  color:var(--muted);
+  border-bottom:1px solid var(--separator);
+}
+.positions-table td{
+  padding:6px 6px;
+  border-bottom:1px solid var(--separator);
+  vertical-align:middle;
+}
+.positions-table input{
+  background:transparent;border:none;outline:none;
+  color:var(--text);font-family:'Figtree',sans-serif;font-size:13px;
+  width:100%;padding:2px 0;
+}
+.positions-table input:focus{border-bottom:1px solid var(--accent);margin-bottom:-1px}
+.del-row-btn{
+  background:none;border:none;color:var(--overdue);
+  cursor:pointer;padding:2px;opacity:0.6;
+  display:flex;align-items:center;justify-content:center;
+}
+.del-row-btn:hover{opacity:1}
+.del-row-btn svg{width:14px;height:14px}
+
+.total-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 0 4px;
+  border-top:1px solid var(--separator);
+}
+.total-label{font-size:13px;font-weight:600;color:var(--muted)}
+.total-amount{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:700;color:var(--accent)
+}
+
+/* ── Detail grid ── */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.detail-item-label{font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:3px}
+.detail-item-value{font-size:14px;font-weight:500}
+
+/* ── Divider ── */
+.divider{height:1px;background:var(--separator);margin:16px 0}
+
+/* ── Date badges ── */
+.date-badge{
+  display:inline-flex;padding:2px 8px;
+  border-radius:4px;
+  font-size:11px;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.4px;
+}
+.date-badge.today{background:var(--accent-soft);color:var(--accent)}
+.date-badge.tomorrow{background:rgba(78,158,106,0.1);color:var(--paid)}
+
+/* ── Outstanding banner ── */
+.outstanding-banner{
+  background:var(--accent-soft);
+  border:1px solid rgba(33,156,232,0.2);
+  border-radius:var(--radius);
+  padding:14px 16px;
+  margin-bottom:16px;
+}
+.outstanding-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--accent);margin-bottom:4px}
+.outstanding-amount{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700}
+
+/* ── Toast ── */
+#toast{
+  position:fixed;
+  bottom:calc(80px + env(safe-area-inset-bottom));
+  left:50%;
+  transform:translateX(-50%) translateY(12px);
+  background:var(--surface-2);
+  border:1px solid var(--separator);
+  color:var(--text);
+  padding:10px 20px;
+  border-radius:20px;
+  font-size:13px;font-weight:500;
+  z-index:500;
+  pointer-events:none;
+  opacity:0;
+  transition:all 0.3s ease;
+  white-space:nowrap;
+  max-width:90%;
+  text-overflow:ellipsis;
+  overflow:hidden;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="app-logo">Craft<span>IQ</span></div>
+    <button class="icon-btn" onclick="openSettings()" title="Einstellungen">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </header>
+
+  <!-- Tab Content Areas -->
+  <div class="tab-content active" id="tab-dashboard"></div>
+  <div class="tab-content" id="tab-kunden"></div>
+  <div class="tab-content" id="tab-auftraege"></div>
+  <div class="tab-content" id="tab-rechnungen"></div>
+  <div class="tab-content" id="tab-termine"></div>
+
+  <!-- FAB -->
+  <button class="fab hidden" id="fab" onclick="fabAction()">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </button>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span class="nav-label">Übersicht</span>
+    </button>
+    <button class="nav-item" data-tab="kunden" onclick="switchTab('kunden')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="nav-label">Kunden</span>
+    </button>
+    <button class="nav-item" data-tab="auftraege" onclick="switchTab('auftraege')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <span class="nav-label">Aufträge</span>
+    </button>
+    <button class="nav-item" data-tab="rechnungen" onclick="switchTab('rechnungen')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span class="nav-label">Rechnungen</span>
+    </button>
+    <button class="nav-item" data-tab="termine" onclick="switchTab('termine')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span class="nav-label">Termine</span>
+    </button>
+  </nav>
+</div>
+
+<!-- ─────────── MODALS ─────────── -->
+
+<!-- Kunde hinzufügen/bearbeiten -->
+<div class="modal-overlay" id="modal-customer" onclick="handleOverlayClick(event,'modal-customer')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="modal-customer-title">Neuer Kunde</div>
+      <button class="modal-close" onclick="closeModal('modal-customer')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Name *</label>
+        <input class="form-input" id="customer-name" placeholder="Max Mustermann" autocomplete="off">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Telefon</label>
+          <input class="form-input" id="customer-phone" placeholder="+49 89 ..." type="tel">
+        </div>
+        <div class="form-group">
+          <label class="form-label">E-Mail</label>
+          <input class="form-input" id="customer-email" placeholder="mail@..." type="email">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Adresse</label>
+        <input class="form-input" id="customer-address" placeholder="Musterstr. 1, 80331 München">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notizen</label>
+        <textarea class="form-textarea" id="customer-notes" placeholder="Zusätzliche Infos..."></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="saveCustomer()">Speichern</button>
+      <button class="btn btn-danger" id="customer-delete-btn" onclick="deleteCustomer()" style="display:none">Kunde löschen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Kunden-Detail -->
+<div class="modal-overlay" id="modal-customer-detail" onclick="handleOverlayClick(event,'modal-customer-detail')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="modal-customer-detail-title"></div>
+      <button class="modal-close" onclick="closeModal('modal-customer-detail')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="customer-detail-body"></div>
+  </div>
+</div>
+
+<!-- Auftrag erstellen/bearbeiten -->
+<div class="modal-overlay" id="modal-quote" onclick="handleOverlayClick(event,'modal-quote')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="modal-quote-title">Neuer Auftrag</div>
+      <button class="modal-close" onclick="closeModal('modal-quote')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Kunde</label>
+        <select class="form-select" id="quote-customer"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Titel *</label>
+        <input class="form-input" id="quote-title" placeholder="z.B. Eichenholz-Schrank Wohnzimmer" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Auftrag für KI beschreiben</label>
+        <textarea class="form-textarea ai-textarea" id="quote-description" placeholder="z.B. Eichenholz-Schrank 2m × 1,5m, 3 Fächer mit Schiebetüren, inkl. Lieferung und Montage in München..."></textarea>
+      </div>
+      <button class="btn btn-ai" id="ai-generate-btn" onclick="generateWithAI()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Mit KI erstellen
+      </button>
+      <div style="margin-top:16px">
+        <label class="form-label">Positionen</label>
+        <div id="quote-items-table"></div>
+      </div>
+      <div class="form-group" style="margin-top:14px">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="quote-status">
+          <option value="entwurf">Entwurf</option>
+          <option value="verschickt">Verschickt</option>
+          <option value="angenommen">Angenommen</option>
+          <option value="abgelehnt">Abgelehnt</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="saveQuote()">Speichern</button>
+      <button class="btn btn-danger" id="quote-delete-btn" onclick="deleteQuote()" style="display:none">Auftrag löschen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Auftrags-Detail -->
+<div class="modal-overlay" id="modal-quote-detail" onclick="handleOverlayClick(event,'modal-quote-detail')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="modal-quote-detail-title" style="font-size:17px;font-weight:600;max-width:80%"></div>
+      <button class="modal-close" onclick="closeModal('modal-quote-detail')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="quote-detail-body"></div>
+  </div>
+</div>
+
+<!-- Rechnungs-Detail -->
+<div class="modal-overlay" id="modal-invoice-detail" onclick="handleOverlayClick(event,'modal-invoice-detail')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="modal-invoice-detail-title"></div>
+      <button class="modal-close" onclick="closeModal('modal-invoice-detail')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="invoice-detail-body"></div>
+  </div>
+</div>
+
+<!-- Termin Modal -->
+<div class="modal-overlay" id="modal-appointment" onclick="handleOverlayClick(event,'modal-appointment')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="modal-appointment-title">Neuer Termin</div>
+      <button class="modal-close" onclick="closeModal('modal-appointment')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Titel *</label>
+        <input class="form-input" id="appointment-title" placeholder="z.B. Aufmaß beim Kunden" autocomplete="off">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Datum *</label>
+          <input class="form-input" id="appointment-date" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Uhrzeit</label>
+          <input class="form-input" id="appointment-time" type="time">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kunde</label>
+        <select class="form-select" id="appointment-customer"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notizen</label>
+        <textarea class="form-textarea" id="appointment-notes" placeholder="Adresse, weitere Infos..."></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="saveAppointment()">Speichern</button>
+      <button class="btn btn-danger" id="appointment-delete-btn" onclick="deleteAppointment()" style="display:none">Termin löschen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Einstellungen -->
+<div class="modal-overlay" id="modal-settings" onclick="handleOverlayClick(event,'modal-settings')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Einstellungen</div>
+      <button class="modal-close" onclick="closeModal('modal-settings')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:12px">Firmendaten (erscheinen auf PDF)</div>
+      <div class="form-group">
+        <label class="form-label">Firmenname</label>
+        <input class="form-input" id="settings-firma" placeholder="Schreinerei Mustermann GmbH">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Inhaber</label>
+        <input class="form-input" id="settings-inhaber" placeholder="Hans Mustermann">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Straße + Hausnummer</label>
+        <input class="form-input" id="settings-strasse" placeholder="Werkstattweg 5">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">PLZ</label>
+          <input class="form-input" id="settings-plz" placeholder="80331">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ort</label>
+          <input class="form-input" id="settings-ort" placeholder="München">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Telefon</label>
+          <input class="form-input" id="settings-telefon" placeholder="+49 89 ...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">E-Mail</label>
+          <input class="form-input" id="settings-email" placeholder="info@...">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">IBAN</label>
+        <input class="form-input" id="settings-iban" placeholder="DE89 7005 4306 ...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Steuernummer</label>
+        <input class="form-input" id="settings-steuernr" placeholder="123/456/78901">
+      </div>
+      <div class="divider"></div>
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:12px">KI-Integration</div>
+      <div class="form-group">
+        <label class="form-label">OpenRouter API-Key</label>
+        <input class="form-input" id="settings-apikey" placeholder="sk-or-v1-..." type="password" autocomplete="off">
+        <div style="font-size:11px;color:var(--muted);margin-top:5px">Kostenlos unter openrouter.ai erstellen → „Free credit"</div>
+      </div>
+      <button class="btn btn-primary" onclick="saveSettings()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════
+const AI_ENDPOINT = 'https://yyxnhwkdwcgpqajeknfe.supabase.co/functions/v1/craftiq-ai';
+
+// ═══════════════════════════════════════
+//  STORAGE
+// ═══════════════════════════════════════
+const store = {
+  get(key, def) {
+    const raw = localStorage.getItem('craftiq_' + key);
+    if (raw === null) return def !== undefined ? def : [];
+    try { return JSON.parse(raw); } catch { return def !== undefined ? def : []; }
+  },
+  set(key, val) { localStorage.setItem('craftiq_' + key, JSON.stringify(val)); },
+};
+
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+let appState = {
+  tab: 'dashboard',
+  quoteFilter: 'alle',
+  invoiceFilter: 'offen',
+  editingCustomerId: null,
+  editingQuoteId: null,
+  editingAppointmentId: null,
+};
+let quoteItems = [];
+
+// ═══════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════
+const uid = () => Math.random().toString(36).slice(2, 11);
+const now = () => new Date().toISOString();
+
+function fmt(n) {
+  const num = parseFloat(n) || 0;
+  return num.toLocaleString('de-DE', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €';
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  try {
+    if (typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d)) {
+      const [y,m,day] = d.split('-');
+      return `${day}.${m}.${y}`;
+    }
+    return new Date(d).toLocaleDateString('de-DE');
+  } catch { return '—'; }
+}
+
+function greeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Guten Morgen.';
+  if (h < 17) return 'Guten Tag.';
+  return 'Guten Abend.';
+}
+
+function getCustomerName(id) {
+  if (!id) return '—';
+  const c = store.get('customers').find(c => c.id === id);
+  return c ? c.name : '—';
+}
+
+function statusLabel(s) {
+  const map = {entwurf:'Entwurf',verschickt:'Verschickt',angenommen:'Angenommen',abgelehnt:'Abgelehnt',offen:'Offen',bezahlt:'Bezahlt'};
+  return map[s] || s;
+}
+
+function calcTotal(items) {
+  return items.reduce((s,i) => s + (parseFloat(i.menge)||0) * (parseFloat(i.einzelpreis)||0), 0);
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function parseAppDate(d) {
+  if (!d) return null;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(d)) {
+    const [y,m,day] = d.split('-').map(Number);
+    const dt = new Date(y, m-1, day);
+    dt.setHours(0,0,0,0);
+    return dt;
+  }
+  const dt = new Date(d);
+  dt.setHours(0,0,0,0);
+  return isNaN(dt.getTime()) ? null : dt;
+}
+
+// ═══════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════
+let toastTimer = null;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ═══════════════════════════════════════
+//  TABS
+// ═══════════════════════════════════════
+function switchTab(tab) {
+  appState.tab = tab;
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  const navBtn = document.querySelector(`.nav-item[data-tab="${tab}"]`);
+  if (navBtn) navBtn.classList.add('active');
+  const fab = document.getElementById('fab');
+  if (['kunden','auftraege','termine'].includes(tab)) fab.classList.remove('hidden');
+  else fab.classList.add('hidden');
+  renderTab(tab);
+}
+
+function fabAction() {
+  if (appState.tab === 'kunden')     openCustomerModal();
+  else if (appState.tab === 'auftraege')  openQuoteModal();
+  else if (appState.tab === 'termine')    openAppointmentModal();
+}
+
+function renderTab(tab) {
+  if (tab === 'dashboard')  renderDashboard();
+  else if (tab === 'kunden')     renderKunden();
+  else if (tab === 'auftraege')  renderAuftraege();
+  else if (tab === 'rechnungen') renderRechnungen();
+  else if (tab === 'termine')    renderTermine();
+}
+
+// ═══════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════
+function renderDashboard() {
+  const quotes       = store.get('quotes');
+  const invoices     = store.get('invoices');
+  const appointments = store.get('appointments');
+
+  const openQuotes  = quotes.filter(q => q.status !== 'abgelehnt').length;
+  const openInvList = invoices.filter(i => i.status === 'offen');
+  const openAmount  = openInvList.reduce((s,i) => s + (parseFloat(i.amount)||0), 0);
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const in7   = new Date(today.getTime() + 7*86400000);
+  const weekApts = appointments.filter(a => {
+    const d = parseAppDate(a.date);
+    return d && d >= today && d <= in7;
+  }).length;
+
+  const recent = [
+    ...quotes.map(q => ({date:q.created_at, title:q.title, sub:getCustomerName(q.customer_id), status:q.status})),
+    ...invoices.map(i => ({date:i.created_at, title:'Rechnung ' + i.number, sub:getCustomerName(i.customer_id), status:i.status})),
+  ].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+
+  document.getElementById('tab-dashboard').innerHTML = `
+    <div class="greeting">
+      <div class="greeting-sub">CraftIQ</div>
+      <div class="greeting-main">${greeting()}</div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Offene KVAs</div>
+        <div class="stat-value${openQuotes > 0 ? ' accent' : ''}">${openQuotes}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Termine (7 Tage)</div>
+        <div class="stat-value">${weekApts}</div>
+      </div>
+      <div class="stat-card stat-wide">
+        <div class="stat-label">Ausstehende Rechnungen</div>
+        <div class="stat-value${openInvList.length > 0 ? ' accent' : ''}">${openInvList.length > 0 ? fmt(openAmount) : '—'}</div>
+      </div>
+    </div>
+    <div class="quick-actions">
+      <button class="quick-btn" onclick="switchTab('auftraege'); setTimeout(openQuoteModal, 200)">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Neuer Auftrag
+      </button>
+      <button class="quick-btn" onclick="switchTab('kunden'); setTimeout(openCustomerModal, 200)">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+        Neuer Kunde
+      </button>
+    </div>
+    <div class="section-header"><div class="section-title">Letzte Aktivität</div></div>
+    ${recent.length === 0
+      ? `<div class="empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <p>Noch keine Aktivität.<br>Leg den ersten Auftrag an.</p>
+        </div>`
+      : recent.map(item => `
+          <div class="card ${item.status}">
+            <div class="card-title">${escHtml(item.title)}</div>
+            <div class="card-row">
+              <div class="card-subtitle">${escHtml(item.sub)}</div>
+              <span class="badge ${item.status}">${statusLabel(item.status)}</span>
+            </div>
+          </div>`).join('')
+    }
+  `;
+}
+
+// ═══════════════════════════════════════
+//  KUNDEN
+// ═══════════════════════════════════════
+function renderKunden() {
+  const customers = store.get('customers');
+  const quotes    = store.get('quotes');
+  const el        = document.getElementById('tab-kunden');
+
+  if (customers.length === 0) {
+    el.innerHTML = `<div class="empty-state">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <p>Noch keine Kunden.<br>Tippe auf + um anzufangen.</p>
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = customers.map(c => {
+    const qCount = quotes.filter(q => q.customer_id === c.id).length;
+    return `
+      <div class="card" onclick="openCustomerDetail('${c.id}')">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="avatar">${escHtml(c.name.charAt(0).toUpperCase())}</div>
+          <div style="flex:1;min-width:0">
+            <div class="card-title">${escHtml(c.name)}</div>
+            <div class="card-subtitle">${c.address ? escHtml(c.address.split(',').pop().trim()) : '—'} &middot; ${qCount} Auftrag${qCount !== 1 ? 'träge' : ''}</div>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;color:var(--muted);flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+//  AUFTRÄGE
+// ═══════════════════════════════════════
+function renderAuftraege() {
+  const quotes   = store.get('quotes');
+  const el       = document.getElementById('tab-auftraege');
+  const filtered = (appState.quoteFilter === 'alle' ? quotes : quotes.filter(q => q.status === appState.quoteFilter))
+    .sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+
+  el.innerHTML = `
+    <div class="filter-row">
+      ${['alle','entwurf','verschickt','angenommen','abgelehnt'].map(f =>
+        `<button class="filter-chip ${appState.quoteFilter === f ? 'active' : ''}" onclick="setQuoteFilter('${f}')">${f === 'alle' ? 'Alle' : statusLabel(f)}</button>`
+      ).join('')}
+    </div>
+    ${filtered.length === 0
+      ? `<div class="empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <p>Keine Aufträge.<br>Tippe auf + um loszulegen.</p>
+        </div>`
+      : filtered.map(q => `
+          <div class="card ${q.status}" onclick="openQuoteDetail('${q.id}')">
+            <div class="card-title">${escHtml(q.title)}</div>
+            <div class="card-subtitle">${escHtml(getCustomerName(q.customer_id))}</div>
+            <div class="card-row">
+              <div class="card-amount">${fmt(q.total || 0)}</div>
+              <span class="badge ${q.status}">${statusLabel(q.status)}</span>
+            </div>
+            <div class="card-date">${fmtDate(q.created_at)}</div>
+          </div>`).join('')
+    }
+  `;
+}
+
+function setQuoteFilter(f) { appState.quoteFilter = f; renderAuftraege(); }
+
+// ═══════════════════════════════════════
+//  RECHNUNGEN
+// ═══════════════════════════════════════
+function renderRechnungen() {
+  const invoices = store.get('invoices');
+  const el       = document.getElementById('tab-rechnungen');
+  const openList = invoices.filter(i => i.status === 'offen');
+  const openAmt  = openList.reduce((s,i) => s + (parseFloat(i.amount)||0), 0);
+  const filtered = invoices.filter(i => i.status === appState.invoiceFilter)
+    .sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+
+  el.innerHTML = `
+    ${openList.length > 0 ? `
+      <div class="outstanding-banner">
+        <div class="outstanding-label">Ausstehend</div>
+        <div class="outstanding-amount">${fmt(openAmt)}</div>
+      </div>` : ''}
+    <div class="filter-row">
+      <button class="filter-chip ${appState.invoiceFilter==='offen'?'active':''}" onclick="setInvoiceFilter('offen')">Offen</button>
+      <button class="filter-chip ${appState.invoiceFilter==='bezahlt'?'active':''}" onclick="setInvoiceFilter('bezahlt')">Bezahlt</button>
+    </div>
+    ${filtered.length === 0
+      ? `<div class="empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <p>Keine ${appState.invoiceFilter === 'offen' ? 'offenen' : 'bezahlten'} Rechnungen.</p>
+        </div>`
+      : filtered.map(inv => `
+          <div class="card ${inv.status}" onclick="openInvoiceDetail('${inv.id}')">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+              <div style="min-width:0">
+                <div class="card-title">Rechnung ${escHtml(inv.number)}</div>
+                <div class="card-subtitle">${escHtml(getCustomerName(inv.customer_id))}</div>
+              </div>
+              <span class="badge ${inv.status}" style="flex-shrink:0">${statusLabel(inv.status)}</span>
+            </div>
+            <div class="card-row">
+              <div class="card-amount">${fmt(inv.amount)}</div>
+              <div style="font-size:12px;color:var(--muted)">Fällig ${fmtDate(inv.due_date)}</div>
+            </div>
+          </div>`).join('')
+    }
+  `;
+}
+
+function setInvoiceFilter(f) { appState.invoiceFilter = f; renderRechnungen(); }
+
+// ═══════════════════════════════════════
+//  TERMINE
+// ═══════════════════════════════════════
+function renderTermine() {
+  const appointments = store.get('appointments');
+  const el           = document.getElementById('tab-termine');
+
+  if (appointments.length === 0) {
+    el.innerHTML = `<div class="empty-state">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <p>Keine Termine.<br>Tippe auf + um anzulegen.</p>
+    </div>`;
+    return;
+  }
+
+  const today    = new Date(); today.setHours(0,0,0,0);
+  const tomorrow = new Date(today.getTime() + 86400000);
+
+  function aptBadge(a) {
+    const d = parseAppDate(a.date);
+    if (!d) return '';
+    if (d.getTime() === today.getTime())    return `<span class="date-badge today">Heute</span>`;
+    if (d.getTime() === tomorrow.getTime()) return `<span class="date-badge tomorrow">Morgen</span>`;
+    return '';
+  }
+
+  function aptCard(a) {
+    return `
+      <div class="card" onclick="openAppointmentDetail('${a.id}')">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+          <div style="min-width:0">
+            <div class="card-title">${escHtml(a.title)}</div>
+            <div class="card-subtitle">${escHtml(getCustomerName(a.customer_id))}${a.time ? ' &middot; ' + escHtml(a.time) + ' Uhr' : ''}</div>
+          </div>
+          ${aptBadge(a)}
+        </div>
+        <div class="card-date">${fmtDate(a.date)}</div>
+      </div>`;
+  }
+
+  const upcoming = [...appointments]
+    .filter(a => { const d = parseAppDate(a.date); return d && d >= today; })
+    .sort((a,b) => parseAppDate(a.date) - parseAppDate(b.date));
+
+  const past = [...appointments]
+    .filter(a => { const d = parseAppDate(a.date); return d && d < today; })
+    .sort((a,b) => parseAppDate(b.date) - parseAppDate(a.date));
+
+  el.innerHTML = `
+    ${upcoming.length > 0 ? `
+      <div class="section-header"><div class="section-title">Kommende Termine</div></div>
+      ${upcoming.map(aptCard).join('')}` : ''}
+    ${past.length > 0 ? `
+      <div class="section-header" style="margin-top:20px">
+        <div class="section-title" style="color:var(--muted)">Vergangene</div>
+      </div>
+      ${past.map(aptCard).join('')}` : ''}
+  `;
+}
+
+// ═══════════════════════════════════════
+//  CUSTOMER CRUD
+// ═══════════════════════════════════════
+function openCustomerModal(customerId = null) {
+  appState.editingCustomerId = customerId;
+  const c = customerId ? store.get('customers').find(x => x.id === customerId) : null;
+  document.getElementById('modal-customer-title').textContent    = c ? 'Kunde bearbeiten' : 'Neuer Kunde';
+  document.getElementById('customer-name').value    = c?.name    || '';
+  document.getElementById('customer-phone').value   = c?.phone   || '';
+  document.getElementById('customer-email').value   = c?.email   || '';
+  document.getElementById('customer-address').value = c?.address || '';
+  document.getElementById('customer-notes').value   = c?.notes   || '';
+  document.getElementById('customer-delete-btn').style.display = c ? 'flex' : 'none';
+  openModal('modal-customer');
+}
+
+function saveCustomer() {
+  const name = document.getElementById('customer-name').value.trim();
+  if (!name) { toast('Name ist Pflicht'); return; }
+  const customers = store.get('customers');
+  const data = {
+    name,
+    phone:   document.getElementById('customer-phone').value.trim(),
+    email:   document.getElementById('customer-email').value.trim(),
+    address: document.getElementById('customer-address').value.trim(),
+    notes:   document.getElementById('customer-notes').value.trim(),
+  };
+  if (appState.editingCustomerId) {
+    const idx = customers.findIndex(x => x.id === appState.editingCustomerId);
+    if (idx >= 0) customers[idx] = {...customers[idx], ...data};
+    toast('Kunde aktualisiert');
+  } else {
+    customers.push({id:uid(), created_at:now(), ...data});
+    toast('Kunde hinzugefügt ✓');
+  }
+  store.set('customers', customers);
+  closeModal('modal-customer');
+  renderKunden();
+}
+
+function deleteCustomer() {
+  if (!confirm('Kunden wirklich löschen?')) return;
+  store.set('customers', store.get('customers').filter(x => x.id !== appState.editingCustomerId));
+  closeModal('modal-customer');
+  toast('Kunde gelöscht');
+  renderKunden();
+}
+
+// ═══════════════════════════════════════
+//  CUSTOMER DETAIL
+// ═══════════════════════════════════════
+function openCustomerDetail(customerId) {
+  const c        = store.get('customers').find(x => x.id === customerId);
+  if (!c) return;
+  const quotes   = store.get('quotes').filter(q => q.customer_id === customerId);
+  const invoices = store.get('invoices').filter(i => i.customer_id === customerId);
+
+  document.getElementById('modal-customer-detail-title').textContent = c.name;
+  document.getElementById('customer-detail-body').innerHTML = `
+    ${(c.phone || c.email || c.address) ? `
+      <div class="detail-grid" style="margin-bottom:12px">
+        ${c.phone ? `<div><div class="detail-item-label">Telefon</div><div class="detail-item-value">${escHtml(c.phone)}</div></div>` : ''}
+        ${c.email ? `<div><div class="detail-item-label">E-Mail</div><div class="detail-item-value" style="font-size:12px;word-break:break-all">${escHtml(c.email)}</div></div>` : ''}
+        ${c.address ? `<div style="grid-column:1/-1"><div class="detail-item-label">Adresse</div><div class="detail-item-value">${escHtml(c.address)}</div></div>` : ''}
+      </div>
+      <div class="divider"></div>` : ''}
+
+    <div class="section-title" style="margin-bottom:10px">Aufträge</div>
+    ${quotes.length === 0
+      ? '<p style="color:var(--muted);font-size:13px;margin-bottom:16px">Keine Aufträge</p>'
+      : quotes.map(q => `
+          <div class="card ${q.status}" onclick="closeModal('modal-customer-detail');setTimeout(()=>openQuoteDetail('${q.id}'),320)">
+            <div class="card-title">${escHtml(q.title)}</div>
+            <div class="card-row"><div>${fmt(q.total||0)}</div><span class="badge ${q.status}">${statusLabel(q.status)}</span></div>
+          </div>`).join('')
+    }
+
+    <div class="section-title" style="margin:16px 0 10px">Rechnungen</div>
+    ${invoices.length === 0
+      ? '<p style="color:var(--muted);font-size:13px;margin-bottom:16px">Keine Rechnungen</p>'
+      : invoices.map(i => `
+          <div class="card ${i.status}" onclick="closeModal('modal-customer-detail');setTimeout(()=>openInvoiceDetail('${i.id}'),320)">
+            <div class="card-title">Rechnung ${escHtml(i.number)}</div>
+            <div class="card-row"><div>${fmt(i.amount)}</div><span class="badge ${i.status}">${statusLabel(i.status)}</span></div>
+          </div>`).join('')
+    }
+
+    <div class="divider"></div>
+    <button class="btn btn-secondary" onclick="closeModal('modal-customer-detail');setTimeout(()=>openCustomerModal('${customerId}'),320)">
+      Kunde bearbeiten
+    </button>
+  `;
+  openModal('modal-customer-detail');
+}
+
+// ═══════════════════════════════════════
+//  QUOTE CRUD
+// ═══════════════════════════════════════
+function openQuoteModal(quoteId = null) {
+  appState.editingQuoteId = quoteId;
+  const q = quoteId ? store.get('quotes').find(x => x.id === quoteId) : null;
+  quoteItems = q ? JSON.parse(JSON.stringify(q.items || [])) : [];
+
+  const customers = store.get('customers');
+  document.getElementById('quote-customer').innerHTML =
+    `<option value="">Kein Kunde</option>` +
+    customers.map(c => `<option value="${c.id}"${q?.customer_id===c.id?' selected':''}>${escHtml(c.name)}</option>`).join('');
+
+  document.getElementById('quote-title').value       = q?.title       || '';
+  document.getElementById('quote-description').value = q?.description || '';
+  document.getElementById('quote-status').value      = q?.status      || 'entwurf';
+  document.getElementById('modal-quote-title').textContent = q ? 'Auftrag bearbeiten' : 'Neuer Auftrag';
+  document.getElementById('quote-delete-btn').style.display = q ? 'flex' : 'none';
+
+  renderQuoteItemsTable();
+  openModal('modal-quote');
+}
+
+function renderQuoteItemsTable() {
+  const total = calcTotal(quoteItems);
+  document.getElementById('quote-items-table').innerHTML = `
+    ${quoteItems.length > 0 ? `
+      <table class="positions-table">
+        <thead><tr>
+          <th style="width:38%">Beschreibung</th>
+          <th style="width:14%;text-align:right">Menge</th>
+          <th style="width:14%">Einheit</th>
+          <th style="width:20%;text-align:right">EP (€)</th>
+          <th style="width:14%"></th>
+        </tr></thead>
+        <tbody>
+          ${quoteItems.map((item, i) => `
+            <tr>
+              <td><input value="${escHtml(item.beschreibung||'')}" onchange="updateQItem(${i},'beschreibung',this.value)" placeholder="Position..."></td>
+              <td style="text-align:right"><input value="${item.menge||''}" onchange="updateQItem(${i},'menge',this.value)" type="number" min="0" step="0.1" style="text-align:right"></td>
+              <td><input value="${escHtml(item.einheit||'Std')}" onchange="updateQItem(${i},'einheit',this.value)"></td>
+              <td style="text-align:right"><input value="${item.einzelpreis||''}" onchange="updateQItem(${i},'einzelpreis',this.value)" type="number" min="0" step="0.01" style="text-align:right"></td>
+              <td>
+                <button class="del-row-btn" onclick="removeQItem(${i})">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+      <div class="total-row">
+        <span class="total-label">Gesamt (netto)</span>
+        <span class="total-amount">${fmt(total)}</span>
+      </div>` : ''}
+    <button class="btn btn-secondary" style="padding:9px;font-size:13px;margin-top:6px" onclick="addQItem()">
+      + Position hinzufügen
+    </button>
+  `;
+}
+
+function updateQItem(i, field, value) {
+  if (quoteItems[i]) {
+    quoteItems[i][field] = value;
+    const el = document.querySelector('.total-amount');
+    if (el) el.textContent = fmt(calcTotal(quoteItems));
+  }
+}
+
+function addQItem() {
+  quoteItems.push({beschreibung:'', menge:1, einheit:'Std', einzelpreis:65});
+  renderQuoteItemsTable();
+}
+
+function removeQItem(i) {
+  quoteItems.splice(i, 1);
+  renderQuoteItemsTable();
+}
+
+async function generateWithAI() {
+  const desc = document.getElementById('quote-description').value.trim();
+  if (!desc) { toast('Bitte Auftrag beschreiben'); return; }
+
+  const btn = document.getElementById('ai-generate-btn');
+  btn.innerHTML = '<div class="spinner"></div> Erstelle Positionen...';
+  btn.disabled = true;
+
+  try {
+    const resp = await fetch(AI_ENDPOINT, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ description: desc }),
+    });
+
+    if (!resp.ok) throw new Error(`API Fehler ${resp.status}`);
+    const data    = await resp.json();
+    const content = data.content?.[0]?.text || '';
+
+    let items;
+    try {
+      const cleaned = content.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+      const match   = cleaned.match(/\[[\s\S]*\]/);
+      items = JSON.parse(match ? match[0] : cleaned);
+      if (!Array.isArray(items)) throw new Error('Kein Array');
+    } catch {
+      throw new Error('KI-Antwort ungültig — bitte manuell eingeben');
+    }
+
+    quoteItems = items.map(item => ({
+      beschreibung: String(item.beschreibung || item.description || ''),
+      menge:        parseFloat(item.menge) || 1,
+      einheit:      String(item.einheit || item.unit || 'Std'),
+      einzelpreis:  parseFloat(item.einzelpreis || item.preis || item.einzelPreis) || 0,
+    }));
+
+    if (!document.getElementById('quote-title').value.trim()) {
+      document.getElementById('quote-title').value = desc.substring(0, 60);
+    }
+
+    renderQuoteItemsTable();
+    toast('Positionen generiert ✓');
+
+  } catch (e) {
+    console.error(e);
+    toast('Fehler: ' + e.message);
+  } finally {
+    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Mit KI erstellen`;
+    btn.disabled = false;
+  }
+}
+
+function saveQuote() {
+  const title = document.getElementById('quote-title').value.trim();
+  if (!title) { toast('Titel ist Pflicht'); return; }
+  const quotes = store.get('quotes');
+  const data = {
+    customer_id: document.getElementById('quote-customer').value || null,
+    title,
+    description: document.getElementById('quote-description').value.trim(),
+    items:  JSON.parse(JSON.stringify(quoteItems)),
+    total:  calcTotal(quoteItems),
+    status: document.getElementById('quote-status').value,
+  };
+  if (appState.editingQuoteId) {
+    const idx = quotes.findIndex(x => x.id === appState.editingQuoteId);
+    if (idx >= 0) quotes[idx] = {...quotes[idx], ...data};
+    toast('Auftrag aktualisiert');
+  } else {
+    quotes.push({id:uid(), created_at:now(), ...data});
+    toast('Auftrag gespeichert ✓');
+  }
+  store.set('quotes', quotes);
+  closeModal('modal-quote');
+  renderAuftraege();
+}
+
+function deleteQuote() {
+  if (!confirm('Auftrag wirklich löschen?')) return;
+  store.set('quotes', store.get('quotes').filter(x => x.id !== appState.editingQuoteId));
+  closeModal('modal-quote');
+  toast('Auftrag gelöscht');
+  renderAuftraege();
+}
+
+// ═══════════════════════════════════════
+//  QUOTE DETAIL
+// ═══════════════════════════════════════
+function openQuoteDetail(quoteId) {
+  const q = store.get('quotes').find(x => x.id === quoteId);
+  if (!q) return;
+  const alreadyInvoiced = store.get('invoices').some(i => i.quote_id === quoteId);
+
+  document.getElementById('modal-quote-detail-title').textContent = q.title;
+  document.getElementById('quote-detail-body').innerHTML = `
+    <div class="detail-grid">
+      <div><div class="detail-item-label">Kunde</div><div class="detail-item-value">${escHtml(getCustomerName(q.customer_id))}</div></div>
+      <div><div class="detail-item-label">Datum</div><div class="detail-item-value">${fmtDate(q.created_at)}</div></div>
+      <div><div class="detail-item-label">Status</div><div class="detail-item-value"><span class="badge ${q.status}">${statusLabel(q.status)}</span></div></div>
+      <div><div class="detail-item-label">Gesamt</div><div class="detail-item-value" style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--accent)">${fmt(q.total||0)}</div></div>
+    </div>
+    ${q.description ? `<p style="font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:14px">${escHtml(q.description)}</p>` : ''}
+    ${q.items && q.items.length > 0 ? `
+      <div class="divider"></div>
+      <table class="positions-table" style="pointer-events:none">
+        <thead><tr>
+          <th>Beschreibung</th>
+          <th style="text-align:right">Menge</th>
+          <th>Einheit</th>
+          <th style="text-align:right">EP</th>
+          <th style="text-align:right">Gesamt</th>
+        </tr></thead>
+        <tbody>
+          ${q.items.map(item => {
+            const pos = (parseFloat(item.menge)||0) * (parseFloat(item.einzelpreis)||0);
+            return `<tr>
+              <td>${escHtml(item.beschreibung||'')}</td>
+              <td style="text-align:right">${item.menge}</td>
+              <td>${escHtml(item.einheit||'')}</td>
+              <td style="text-align:right">${(parseFloat(item.einzelpreis)||0).toFixed(2)} €</td>
+              <td style="text-align:right">${pos.toFixed(2)} €</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+      <div class="total-row">
+        <span class="total-label">Gesamt (netto)</span>
+        <span class="total-amount">${fmt(q.total||0)}</span>
+      </div>` : ''}
+    <div class="divider"></div>
+    <button class="btn btn-secondary" onclick="printQuotePDF('${quoteId}')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Als PDF drucken
+    </button>
+    ${!alreadyInvoiced && q.status !== 'abgelehnt' ? `
+      <button class="btn btn-primary" onclick="convertToInvoice('${quoteId}')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        In Rechnung umwandeln
+      </button>` : alreadyInvoiced ? `<p style="text-align:center;font-size:13px;color:var(--muted);margin-top:8px">Rechnung bereits erstellt</p>` : ''}
+    <button class="btn btn-secondary" onclick="closeModal('modal-quote-detail');setTimeout(()=>openQuoteModal('${quoteId}'),320)">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Bearbeiten
+    </button>
+  `;
+  openModal('modal-quote-detail');
+}
+
+// ═══════════════════════════════════════
+//  INVOICE CRUD
+// ═══════════════════════════════════════
+function convertToInvoice(quoteId) {
+  const q = store.get('quotes').find(x => x.id === quoteId);
+  if (!q) return;
+  const counter  = store.get('invoiceCounter', {year:0, count:0});
+  const year     = new Date().getFullYear();
+  const newCount = counter.year === year ? counter.count + 1 : 1;
+  store.set('invoiceCounter', {year, count: newCount});
+  const number  = `${year}-${String(newCount).padStart(3,'0')}`;
+  const dueDate = new Date();
+  dueDate.setDate(dueDate.getDate() + 14);
+
+  const invoices = store.get('invoices');
+  invoices.push({
+    id:          uid(),
+    quote_id:    quoteId,
+    customer_id: q.customer_id,
+    number,
+    amount:      q.total || 0,
+    status:      'offen',
+    due_date:    dueDate.toISOString().split('T')[0],
+    paid_date:   null,
+    created_at:  now(),
+  });
+  store.set('invoices', invoices);
+
+  const quotes = store.get('quotes');
+  const qi = quotes.findIndex(x => x.id === quoteId);
+  if (qi >= 0) quotes[qi].status = 'verschickt';
+  store.set('quotes', quotes);
+
+  closeModal('modal-quote-detail');
+  toast(`Rechnung ${number} erstellt ✓`);
+  switchTab('rechnungen');
+}
+
+function openInvoiceDetail(invoiceId) {
+  const inv = store.get('invoices').find(x => x.id === invoiceId);
+  if (!inv) return;
+  const c = store.get('customers').find(x => x.id === inv.customer_id);
+  const q = inv.quote_id ? store.get('quotes').find(x => x.id === inv.quote_id) : null;
+
+  document.getElementById('modal-invoice-detail-title').textContent = 'Rechnung ' + inv.number;
+  document.getElementById('invoice-detail-body').innerHTML = `
+    <div class="detail-grid">
+      <div><div class="detail-item-label">Kunde</div><div class="detail-item-value">${escHtml(c?.name||'—')}</div></div>
+      <div><div class="detail-item-label">Status</div><div class="detail-item-value"><span class="badge ${inv.status}">${statusLabel(inv.status)}</span></div></div>
+      <div><div class="detail-item-label">Betrag</div><div class="detail-item-value" style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--accent)">${fmt(inv.amount)}</div></div>
+      <div><div class="detail-item-label">Fällig am</div><div class="detail-item-value">${fmtDate(inv.due_date)}</div></div>
+    </div>
+    ${q ? `<div style="background:var(--surface);border-radius:8px;padding:11px 14px;margin-bottom:14px">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:3px">Aus Auftrag</div>
+      <div style="font-size:14px;font-weight:500">${escHtml(q.title)}</div>
+    </div>` : ''}
+    ${inv.paid_date ? `<div style="background:rgba(78,158,106,0.08);border-radius:8px;padding:11px 14px;margin-bottom:14px">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:var(--paid);margin-bottom:3px">Bezahlt am</div>
+      <div style="font-size:14px;font-weight:500">${fmtDate(inv.paid_date)}</div>
+    </div>` : ''}
+    <div class="divider"></div>
+    <button class="btn btn-secondary" onclick="printInvoicePDF('${invoiceId}')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Als PDF drucken
+    </button>
+    ${inv.status === 'offen' ? `
+      <button class="btn btn-primary" onclick="markInvoicePaid('${invoiceId}')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Als bezahlt markieren
+      </button>` : ''}
+    <button class="btn btn-danger" onclick="deleteInvoice('${invoiceId}')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      Rechnung löschen
+    </button>
+  `;
+  openModal('modal-invoice-detail');
+}
+
+function markInvoicePaid(invoiceId) {
+  const invoices = store.get('invoices');
+  const idx = invoices.findIndex(x => x.id === invoiceId);
+  if (idx >= 0) {
+    invoices[idx].status    = 'bezahlt';
+    invoices[idx].paid_date = new Date().toISOString().split('T')[0];
+  }
+  store.set('invoices', invoices);
+  closeModal('modal-invoice-detail');
+  toast('Rechnung als bezahlt markiert ✓');
+  renderRechnungen();
+}
+
+function deleteInvoice(invoiceId) {
+  if (!confirm('Rechnung wirklich löschen?')) return;
+  store.set('invoices', store.get('invoices').filter(x => x.id !== invoiceId));
+  closeModal('modal-invoice-detail');
+  toast('Rechnung gelöscht');
+  renderRechnungen();
+}
+
+// ═══════════════════════════════════════
+//  APPOINTMENTS CRUD
+// ═══════════════════════════════════════
+function openAppointmentModal(aptId = null) {
+  appState.editingAppointmentId = aptId;
+  const a = aptId ? store.get('appointments').find(x => x.id === aptId) : null;
+  const customers = store.get('customers');
+  document.getElementById('appointment-customer').innerHTML =
+    `<option value="">Kein Kunde</option>` +
+    customers.map(c => `<option value="${c.id}"${a?.customer_id===c.id?' selected':''}>${escHtml(c.name)}</option>`).join('');
+  document.getElementById('appointment-title').value = a?.title || '';
+  document.getElementById('appointment-date').value  = a?.date  || '';
+  document.getElementById('appointment-time').value  = a?.time  || '';
+  document.getElementById('appointment-notes').value = a?.notes || '';
+  document.getElementById('modal-appointment-title').textContent = a ? 'Termin bearbeiten' : 'Neuer Termin';
+  document.getElementById('appointment-delete-btn').style.display = a ? 'flex' : 'none';
+  openModal('modal-appointment');
+}
+
+function openAppointmentDetail(aptId) { openAppointmentModal(aptId); }
+
+function saveAppointment() {
+  const title = document.getElementById('appointment-title').value.trim();
+  const date  = document.getElementById('appointment-date').value;
+  if (!title) { toast('Titel ist Pflicht'); return; }
+  if (!date)  { toast('Datum ist Pflicht'); return; }
+  const appointments = store.get('appointments');
+  const data = {
+    title,
+    customer_id: document.getElementById('appointment-customer').value || null,
+    date,
+    time:  document.getElementById('appointment-time').value,
+    notes: document.getElementById('appointment-notes').value.trim(),
+  };
+  if (appState.editingAppointmentId) {
+    const idx = appointments.findIndex(x => x.id === appState.editingAppointmentId);
+    if (idx >= 0) appointments[idx] = {...appointments[idx], ...data};
+    toast('Termin aktualisiert');
+  } else {
+    appointments.push({id:uid(), created_at:now(), ...data});
+    toast('Termin gespeichert ✓');
+  }
+  store.set('appointments', appointments);
+  closeModal('modal-appointment');
+  renderTermine();
+}
+
+function deleteAppointment() {
+  if (!confirm('Termin wirklich löschen?')) return;
+  store.set('appointments', store.get('appointments').filter(x => x.id !== appState.editingAppointmentId));
+  closeModal('modal-appointment');
+  toast('Termin gelöscht');
+  renderTermine();
+}
+
+// ═══════════════════════════════════════
+//  SETTINGS
+// ═══════════════════════════════════════
+function openSettings() {
+  const s = store.get('settings', {});
+  document.getElementById('settings-firma').value    = s.firma        || '';
+  document.getElementById('settings-inhaber').value  = s.inhaber      || '';
+  document.getElementById('settings-strasse').value  = s.strasse      || '';
+  document.getElementById('settings-plz').value      = s.plz          || '';
+  document.getElementById('settings-ort').value      = s.ort          || '';
+  document.getElementById('settings-telefon').value  = s.telefon      || '';
+  document.getElementById('settings-email').value    = s.email        || '';
+  document.getElementById('settings-iban').value     = s.iban         || '';
+  document.getElementById('settings-steuernr').value = s.steuernummer || '';
+  document.getElementById('settings-apikey').value   = s.api_key      || '';
+  openModal('modal-settings');
+}
+
+function saveSettings() {
+  store.set('settings', {
+    firma:        document.getElementById('settings-firma').value.trim(),
+    inhaber:      document.getElementById('settings-inhaber').value.trim(),
+    strasse:      document.getElementById('settings-strasse').value.trim(),
+    plz:          document.getElementById('settings-plz').value.trim(),
+    ort:          document.getElementById('settings-ort').value.trim(),
+    telefon:      document.getElementById('settings-telefon').value.trim(),
+    email:        document.getElementById('settings-email').value.trim(),
+    iban:         document.getElementById('settings-iban').value.trim(),
+    steuernummer: document.getElementById('settings-steuernr').value.trim(),
+    api_key:      document.getElementById('settings-apikey').value.trim(),
+  });
+  closeModal('modal-settings');
+  toast('Einstellungen gespeichert ✓');
+}
+
+// ═══════════════════════════════════════
+//  PDF GENERATION
+// ═══════════════════════════════════════
+function getPDFStyles() {
+  return `
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:10.5pt;color:#1a1a1a;padding:36px 40px;background:#fff}
+    .header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:36px;padding-bottom:18px;border-bottom:2.5px solid #0A2E50}
+    .co-name{font-size:20pt;font-weight:800;letter-spacing:-0.5px}
+    .co-detail{font-size:8.5pt;color:#666;line-height:1.7;margin-top:5px}
+    .doc-h1{font-size:16pt;font-weight:700;color:#219CE8;text-align:right}
+    .doc-num{font-size:9.5pt;color:#888;text-align:right;margin-top:3px}
+    .addrs{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin:28px 0}
+    .albl{font-size:7.5pt;text-transform:uppercase;letter-spacing:1px;color:#aaa;margin-bottom:6px;font-weight:600}
+    .aname{font-size:12pt;font-weight:700;margin-bottom:3px}
+    .adet{font-size:9pt;color:#555;line-height:1.6}
+    .meta{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0;padding:14px 16px;background:#faf8f6;border-radius:6px;border:1px solid #f0ece6}
+    .mlbl{font-size:7.5pt;text-transform:uppercase;letter-spacing:0.8px;color:#aaa;display:block;margin-bottom:3px;font-weight:600}
+    .mval{font-size:10pt;font-weight:600}
+    table{width:100%;border-collapse:collapse;margin:20px 0}
+    thead tr{background:#0A2E50}
+    th{color:#fff;padding:9px 10px;text-align:left;font-size:8.5pt;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+    td{padding:9px 10px;border-bottom:1px solid #f0ece6;font-size:9.5pt;vertical-align:top}
+    tr:nth-child(even) td{background:#fdf9f7}
+    .r{text-align:right}
+    .tot-sec{margin-top:14px;text-align:right}
+    .tot-row{display:inline-flex;align-items:center;gap:40px;border-top:2px solid #0A2E50;padding-top:12px}
+    .tot-lbl{font-size:10pt;color:#666}
+    .tot-amt{font-size:17pt;font-weight:800;color:#ED9434}
+    .note{margin-top:30px;padding:14px 16px;background:#faf8f6;border-radius:6px;border-left:3px solid #219CE8;font-size:9pt;color:#555;line-height:1.7}
+    .footer{margin-top:32px;padding-top:14px;border-top:1px solid #e8e4e0;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;font-size:8pt;color:#999;line-height:1.6}
+    @media print{body{padding:16px 20px}@page{margin:1cm}}
+  `;
+}
+
+function printQuotePDF(quoteId) {
+  const q = store.get('quotes').find(x => x.id === quoteId);
+  if (!q) return;
+  const c = store.get('customers').find(x => x.id === q.customer_id);
+  const s = store.get('settings', {});
+  const validUntil = new Date();
+  validUntil.setDate(validUntil.getDate() + 30);
+  const coLines = [s.inhaber, s.strasse, (s.plz&&s.ort) ? s.plz+' '+s.ort : '', s.telefon, s.email].filter(Boolean).join('<br>');
+
+  const html = `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><title>KVA ${escHtml(q.title)}</title><style>${getPDFStyles()}</style></head><body>
+<div class="header">
+  <div><div class="co-name">${escHtml(s.firma||'Ihr Betrieb')}</div><div class="co-detail">${coLines}</div></div>
+  <div><div class="doc-h1">Kostenvoranschlag</div><div class="doc-num">${escHtml(q.title)}</div></div>
+</div>
+<div class="addrs">
+  <div><div class="albl">An</div><div class="aname">${escHtml(c?.name||'—')}</div><div class="adet">${escHtml(c?.address||'')}</div></div>
+  <div><div class="albl">Von</div><div class="aname">${escHtml(s.firma||'—')}</div><div class="adet">${escHtml(s.strasse||'')}${s.plz&&s.ort?'<br>'+s.plz+' '+s.ort:''}</div></div>
+</div>
+<div class="meta">
+  <div><span class="mlbl">Datum</span><span class="mval">${fmtDate(q.created_at)}</span></div>
+  <div><span class="mlbl">Gültig bis</span><span class="mval">${fmtDate(validUntil.toISOString())}</span></div>
+  <div>${s.steuernummer ? `<span class="mlbl">Steuernr.</span><span class="mval">${escHtml(s.steuernummer)}</span>` : ''}</div>
+</div>
+<table>
+  <thead><tr><th>#</th><th>Beschreibung</th><th class="r">Menge</th><th>Einheit</th><th class="r">EP (€)</th><th class="r">Gesamt (€)</th></tr></thead>
+  <tbody>
+    ${(q.items||[]).map((item, i) => {
+      const pos = (parseFloat(item.menge)||0) * (parseFloat(item.einzelpreis)||0);
+      return `<tr><td>${i+1}</td><td>${escHtml(item.beschreibung||'')}</td><td class="r">${item.menge}</td><td>${escHtml(item.einheit||'')}</td><td class="r">${(parseFloat(item.einzelpreis)||0).toFixed(2)}</td><td class="r">${pos.toFixed(2)}</td></tr>`;
+    }).join('')}
+  </tbody>
+</table>
+<div class="tot-sec"><div class="tot-row"><span class="tot-lbl">Gesamtbetrag (netto)</span><span class="tot-amt">${fmt(q.total||0)}</span></div></div>
+<div class="note">Dieser Kostenvoranschlag ist unverbindlich und gilt bis zum <strong>${fmtDate(validUntil.toISOString())}</strong>.<br>Bei Rückfragen stehen wir Ihnen gerne zur Verfügung.</div>
+<div class="footer">
+  <div>${[escHtml(s.firma||''), escHtml(s.inhaber||'')].filter(Boolean).join('<br>')}</div>
+  <div>${[escHtml(s.telefon||''), escHtml(s.email||'')].filter(Boolean).join('<br>')}</div>
+  <div>${s.iban ? 'IBAN: ' + escHtml(s.iban) : ''}</div>
+</div>
+<script>window.onload=function(){window.print()}<\/script>
+</body></html>`;
+
+  openBlobWindow(html);
+  closeModal('modal-quote-detail');
+}
+
+function printInvoicePDF(invoiceId) {
+  const inv = store.get('invoices').find(x => x.id === invoiceId);
+  if (!inv) return;
+  const c = store.get('customers').find(x => x.id === inv.customer_id);
+  const q = inv.quote_id ? store.get('quotes').find(x => x.id === inv.quote_id) : null;
+  const s = store.get('settings', {});
+  const coLines = [s.inhaber, s.strasse, (s.plz&&s.ort) ? s.plz+' '+s.ort : '', s.telefon, s.email].filter(Boolean).join('<br>');
+
+  const html = `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><title>Rechnung ${escHtml(inv.number)}</title><style>${getPDFStyles()}</style></head><body>
+<div class="header">
+  <div><div class="co-name">${escHtml(s.firma||'Ihr Betrieb')}</div><div class="co-detail">${coLines}</div></div>
+  <div><div class="doc-h1">Rechnung</div><div class="doc-num">Nr. ${escHtml(inv.number)}</div></div>
+</div>
+<div class="addrs">
+  <div><div class="albl">An</div><div class="aname">${escHtml(c?.name||'—')}</div><div class="adet">${escHtml(c?.address||'')}</div></div>
+  <div><div class="albl">Von</div><div class="aname">${escHtml(s.firma||'—')}</div><div class="adet">${escHtml(s.strasse||'')}${s.plz&&s.ort?'<br>'+s.plz+' '+s.ort:''}</div></div>
+</div>
+<div class="meta">
+  <div><span class="mlbl">Rechnungsdatum</span><span class="mval">${fmtDate(inv.created_at)}</span></div>
+  <div><span class="mlbl">Fällig am</span><span class="mval">${fmtDate(inv.due_date)}</span></div>
+  <div>${s.steuernummer ? `<span class="mlbl">Steuernr.</span><span class="mval">${escHtml(s.steuernummer)}</span>` : ''}</div>
+</div>
+${q && q.items && q.items.length > 0 ? `
+<table>
+  <thead><tr><th>#</th><th>Beschreibung</th><th class="r">Menge</th><th>Einheit</th><th class="r">EP (€)</th><th class="r">Gesamt (€)</th></tr></thead>
+  <tbody>
+    ${q.items.map((item, i) => {
+      const pos = (parseFloat(item.menge)||0) * (parseFloat(item.einzelpreis)||0);
+      return `<tr><td>${i+1}</td><td>${escHtml(item.beschreibung||'')}</td><td class="r">${item.menge}</td><td>${escHtml(item.einheit||'')}</td><td class="r">${(parseFloat(item.einzelpreis)||0).toFixed(2)}</td><td class="r">${pos.toFixed(2)}</td></tr>`;
+    }).join('')}
+  </tbody>
+</table>` : ''}
+<div class="tot-sec"><div class="tot-row"><span class="tot-lbl">Rechnungsbetrag (netto)</span><span class="tot-amt">${fmt(inv.amount)}</span></div></div>
+<div class="note">
+  Bitte überweisen Sie den Betrag bis zum <strong>${fmtDate(inv.due_date)}</strong> auf folgendes Konto:<br>
+  ${s.iban ? '<strong>IBAN: ' + escHtml(s.iban) + '</strong>' : '<em>(IBAN in den Einstellungen hinterlegen)</em>'}<br>
+  Verwendungszweck: Rechnung ${escHtml(inv.number)}
+</div>
+<div class="footer">
+  <div>${[escHtml(s.firma||''), escHtml(s.inhaber||'')].filter(Boolean).join('<br>')}</div>
+  <div>${[escHtml(s.telefon||''), escHtml(s.email||'')].filter(Boolean).join('<br>')}</div>
+  <div>${s.iban ? 'IBAN: ' + escHtml(s.iban) : ''}</div>
+</div>
+<script>window.onload=function(){window.print()}<\/script>
+</body></html>`;
+
+  openBlobWindow(html);
+  closeModal('modal-invoice-detail');
+}
+
+function openBlobWindow(html) {
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url  = URL.createObjectURL(blob);
+  const win  = window.open(url, '_blank');
+  if (!win) toast('Popup blockiert — bitte erlauben');
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
+// ═══════════════════════════════════════
+//  MODAL HELPERS
+// ═══════════════════════════════════════
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  if (!document.querySelector('.modal-overlay.open')) {
+    document.body.style.overflow = '';
+  }
+}
+
+function handleOverlayClick(e, id) {
+  if (e.target.id === id) closeModal(id);
+}
+
+// ═══════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════
+function init() {
+  ['customers','quotes','invoices','appointments'].forEach(key => {
+    if (localStorage.getItem('craftiq_' + key) === null) store.set(key, []);
+  });
+  switchTab('dashboard');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

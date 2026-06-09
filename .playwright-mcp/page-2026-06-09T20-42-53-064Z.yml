@@ -1,0 +1,48 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]: CraftIQ
+    - button "Einstellungen" [ref=e5] [cursor=pointer]:
+      - img [ref=e6]
+  - generic [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]: CraftIQ
+      - generic [ref=e12]: Guten Abend.
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e15]: Offene KVAs
+        - generic [ref=e16]: "1"
+      - generic [ref=e17]:
+        - generic [ref=e18]: Termine (7 Tage)
+        - generic [ref=e19]: "1"
+      - generic [ref=e20]:
+        - generic [ref=e21]: Ausstehende Rechnungen
+        - generic [ref=e22]: —
+    - generic [ref=e23]:
+      - button "Neuer Auftrag" [ref=e24] [cursor=pointer]:
+        - img [ref=e25]
+        - text: Neuer Auftrag
+      - button "Neuer Kunde" [ref=e27] [cursor=pointer]:
+        - img [ref=e28]
+        - text: Neuer Kunde
+    - generic [ref=e32]: Letzte Aktivität
+    - generic [ref=e33]:
+      - generic [ref=e34]: Eichenschrank
+      - generic [ref=e35]:
+        - generic [ref=e36]: Balthasar Beyer
+        - generic [ref=e37]: Entwurf
+  - navigation [ref=e38]:
+    - button "Übersicht" [ref=e39] [cursor=pointer]:
+      - img [ref=e40]
+      - generic [ref=e45]: Übersicht
+    - button "Kunden" [ref=e46] [cursor=pointer]:
+      - img [ref=e47]
+      - generic [ref=e52]: Kunden
+    - button "Aufträge" [ref=e53] [cursor=pointer]:
+      - img [ref=e54]
+      - generic [ref=e57]: Aufträge
+    - button "Rechnungen" [ref=e58] [cursor=pointer]:
+      - img [ref=e59]
+      - generic [ref=e62]: Rechnungen
+    - button "Termine" [ref=e63] [cursor=pointer]:
+      - img [ref=e64]
+      - generic [ref=e66]: Termine
