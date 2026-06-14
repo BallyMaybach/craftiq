@@ -1,4 +1,4 @@
-const CACHE = 'craftiq-v2';
+const CACHE = 'craftiq-v5';
 const ASSETS = ['./', './index.html', './icon.png', './manifest.json'];
 
 self.addEventListener('install', e => {

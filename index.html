@@ -215,7 +215,7 @@ body{
 /* ── FAB ── */
 .fab{
   position:fixed;
-  bottom:calc(72px + env(safe-area-inset-bottom));
+  bottom:calc(136px + env(safe-area-inset-bottom));
   right:max(16px, calc(50% - 199px));
   width:54px;height:54px;
   border-radius:50%;
@@ -231,6 +231,131 @@ body{
 .fab:active{transform:scale(0.93);box-shadow:0 2px 8px rgba(33,156,232,0.3)}
 .fab svg{width:26px;height:26px;stroke-width:2.2}
 .fab.hidden{display:none}
+#app.chat-open .fab{display:none}
+
+/* ── KI-Chat-Assistent ── */
+.chat-launcher{
+  position:fixed;
+  bottom:calc(72px + env(safe-area-inset-bottom));
+  right:max(16px, calc(50% - 199px));
+  width:54px;height:54px;
+  border-radius:50%;
+  background:linear-gradient(145deg,var(--accent),#1782c4);
+  border:none;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 22px rgba(33,156,232,0.5);
+  cursor:pointer;z-index:60;
+  transition:transform 0.15s,box-shadow 0.15s,opacity 0.2s;
+}
+.chat-launcher:active{transform:scale(0.92)}
+.chat-launcher svg{width:26px;height:26px;stroke-width:2.1}
+.chat-launcher .chat-dot{
+  position:absolute;top:9px;right:11px;
+  width:9px;height:9px;border-radius:50%;
+  background:var(--gold);border:2px solid var(--bg);
+}
+#app.chat-open .chat-launcher{opacity:0;pointer-events:none}
+
+.chat-panel{
+  position:fixed;
+  bottom:calc(72px + env(safe-area-inset-bottom));
+  right:max(16px, calc(50% - 199px));
+  width:min(358px, calc(100vw - 32px));
+  height:min(72vh, 540px);
+  background:var(--bg-elevated);
+  border:1px solid var(--separator);
+  border-radius:20px;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  box-shadow:0 18px 50px rgba(0,0,0,0.55);
+  z-index:120;
+  opacity:0;transform:translateY(14px) scale(0.97);
+  transform-origin:bottom right;pointer-events:none;
+  transition:opacity 0.2s,transform 0.2s;
+}
+.chat-panel.open{opacity:1;transform:none;pointer-events:auto}
+.chat-head{
+  display:flex;align-items:center;gap:11px;
+  padding:14px 16px;
+  background:var(--surface);
+  border-bottom:1px solid var(--separator);
+}
+.chat-head .chat-avatar{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(145deg,var(--accent),#1782c4);
+  display:flex;align-items:center;justify-content:center;color:#fff;
+}
+.chat-head .chat-avatar svg{width:20px;height:20px}
+.chat-head .chat-title{font-weight:600;font-size:15px;color:var(--text)}
+.chat-head .chat-sub{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px;margin-top:1px}
+.chat-head .chat-sub::before{content:"";width:7px;height:7px;border-radius:50%;background:#3ecf8e}
+.chat-head .chat-close{
+  margin-left:auto;background:none;border:none;color:var(--muted);
+  cursor:pointer;padding:6px;border-radius:8px;line-height:0;
+}
+.chat-head .chat-close:active{background:var(--surface-2)}
+.chat-head .chat-close svg{width:20px;height:20px}
+
+.chat-body{
+  flex:1;overflow-y:auto;
+  padding:16px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.chat-msg{
+  max-width:80%;padding:10px 13px;font-size:14px;line-height:1.45;
+  border-radius:16px;white-space:pre-wrap;word-wrap:break-word;
+}
+.chat-msg.bot{
+  align-self:flex-start;background:var(--surface);color:var(--text);
+  border-bottom-left-radius:5px;
+}
+.chat-msg.user{
+  align-self:flex-end;background:var(--accent);color:#fff;
+  border-bottom-right-radius:5px;
+}
+.chat-typing{
+  align-self:flex-start;background:var(--surface);
+  padding:13px 15px;border-radius:16px;border-bottom-left-radius:5px;
+  display:flex;gap:4px;
+}
+.chat-typing span{
+  width:7px;height:7px;border-radius:50%;background:var(--muted);
+  animation:chatBlink 1.2s infinite both;
+}
+.chat-typing span:nth-child(2){animation-delay:0.2s}
+.chat-typing span:nth-child(3){animation-delay:0.4s}
+@keyframes chatBlink{0%,80%,100%{opacity:0.25}40%{opacity:1}}
+
+.chat-chips{display:flex;flex-wrap:wrap;gap:7px;padding:0 16px 12px}
+.chat-chip{
+  background:var(--surface);border:1px solid var(--separator);
+  color:var(--muted);font-size:12.5px;padding:7px 11px;border-radius:14px;
+  cursor:pointer;
+}
+.chat-chip:active{background:var(--surface-2);color:var(--text)}
+
+.chat-foot{
+  display:flex;gap:8px;align-items:flex-end;
+  padding:11px 12px;
+  border-top:1px solid var(--separator);
+  background:var(--bg-elevated);
+}
+.chat-foot textarea{
+  flex:1;resize:none;max-height:88px;
+  background:var(--surface);border:1px solid var(--separator);
+  border-radius:14px;color:var(--text);
+  padding:10px 13px;font-size:14px;font-family:inherit;line-height:1.4;
+  outline:none;
+}
+.chat-foot textarea:focus{border-color:var(--accent)}
+.chat-send{
+  width:40px;height:40px;flex-shrink:0;border-radius:50%;
+  background:var(--accent);border:none;color:#fff;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.chat-send:active{transform:scale(0.92)}
+.chat-send:disabled{opacity:0.5}
+.chat-send svg{width:19px;height:19px}
 
 /* ── Filters ── */
 .filter-row{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:2px}
@@ -338,7 +463,7 @@ body{
   border:1px solid var(--separator);
   border-radius:var(--radius-sm);
   padding:10px 12px;
-  font-size:14px;
+  font-size:16px;
   color:var(--text);
   font-family:'Figtree',sans-serif;
   transition:border-color 0.15s;
@@ -395,33 +520,60 @@ body{
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── Positions table ── */
-.positions-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
-.positions-table th{
-  text-align:left;padding:6px 6px;
-  font-size:10px;font-weight:600;
-  text-transform:uppercase;letter-spacing:0.5px;
-  color:var(--muted);
-  border-bottom:1px solid var(--separator);
+/* ── Positions editor (stacked cards, mobile) ── */
+.pos-list{margin:12px 0}
+.pos-item{
+  background:var(--surface);
+  border:1px solid var(--separator);
+  border-radius:var(--radius-sm);
+  padding:12px;
+  margin-bottom:10px;
 }
-.positions-table td{
-  padding:6px 6px;
-  border-bottom:1px solid var(--separator);
-  vertical-align:middle;
-}
-.positions-table input{
+.pos-item-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.pos-desc-input{
+  flex:1;min-width:0;
   background:transparent;border:none;outline:none;
-  color:var(--text);font-family:'Figtree',sans-serif;font-size:13px;
-  width:100%;padding:2px 0;
+  color:var(--text);font-family:'Figtree',sans-serif;
+  font-size:16px;font-weight:600;width:100%;
+  border-bottom:1px solid transparent;padding:3px 0;
 }
-.positions-table input:focus{border-bottom:1px solid var(--accent);margin-bottom:-1px}
+.pos-desc-input:focus{border-bottom-color:var(--accent)}
+.pos-desc-input::placeholder{color:var(--muted);font-weight:400}
+.pos-fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.pos-field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.pos-field label{
+  font-size:9px;font-weight:600;text-transform:uppercase;
+  letter-spacing:0.4px;color:var(--muted);
+}
+.pos-field input{
+  width:100%;min-width:0;
+  background:var(--bg-elevated);border:1px solid var(--separator);
+  border-radius:6px;padding:9px 9px;
+  color:var(--text);font-family:'Figtree',sans-serif;font-size:16px;
+  outline:none;transition:border-color 0.15s;
+}
+.pos-field input:focus{border-color:var(--accent)}
 .del-row-btn{
   background:none;border:none;color:var(--overdue);
-  cursor:pointer;padding:2px;opacity:0.6;
+  cursor:pointer;padding:6px;opacity:0.75;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
 }
-.del-row-btn:hover{opacity:1}
-.del-row-btn svg{width:14px;height:14px}
+.del-row-btn:active{opacity:1}
+.del-row-btn svg{width:18px;height:18px}
+
+/* ── Positions read-only list ── */
+.pos-line{
+  display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  padding:11px 0;border-bottom:1px solid var(--separator);
+}
+.pos-line:last-of-type{border-bottom:none}
+.pos-line-main{flex:1;min-width:0}
+.pos-line-desc{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px;line-height:1.35}
+.pos-line-meta{font-size:12px;color:var(--muted)}
+.pos-line-total{
+  font-size:14px;font-weight:600;color:var(--text);
+  white-space:nowrap;font-variant-numeric:tabular-nums;
+}
 
 .total-row{
   display:flex;justify-content:space-between;align-items:center;
@@ -462,6 +614,117 @@ body{
 }
 .outstanding-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--accent);margin-bottom:4px}
 .outstanding-amount{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700}
+
+/* ── Upgrade Banner ── */
+.upgrade-banner{
+  background:linear-gradient(135deg,#0d1e30,#0f2640);
+  border:1px solid rgba(33,156,232,0.28);
+  border-radius:var(--radius);
+  padding:14px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;margin-bottom:20px;
+  transition:border-color 0.15s;
+  width:100%;text-align:left;font-family:'Figtree',sans-serif;
+}
+.upgrade-banner:active{border-color:rgba(33,156,232,0.55)}
+.upgrade-banner-left{display:flex;align-items:center;gap:12px}
+.upgrade-icon{
+  width:38px;height:38px;flex-shrink:0;border-radius:10px;
+  background:linear-gradient(135deg,#219CE8,#6b48ff);
+  display:flex;align-items:center;justify-content:center;
+}
+.upgrade-icon svg{color:white;width:18px;height:18px;stroke-width:2}
+.upgrade-banner-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
+.upgrade-banner-sub{font-size:12px;color:var(--muted)}
+.upgrade-banner-arrow svg{width:18px;height:18px;color:var(--muted)}
+
+/* ── Paywall Modal ── */
+.paywall-overlay{
+  position:fixed;inset:0;
+  background:var(--bg);
+  z-index:200;
+  display:none;flex-direction:column;
+  overflow-y:auto;
+}
+.paywall-overlay.open{display:flex}
+.paywall-modal{
+  flex:1;display:flex;flex-direction:column;
+  width:100%;max-width:430px;margin:0 auto;
+  padding:calc(20px + env(safe-area-inset-top)) 20px calc(28px + env(safe-area-inset-bottom));
+  animation:pwSlideIn 0.28s cubic-bezier(0.32,0.72,0,1);
+}
+@keyframes pwSlideIn{
+  from{transform:translateY(24px);opacity:0}
+  to{transform:translateY(0);opacity:1}
+}
+.pw-close{
+  align-self:flex-end;
+  width:32px;height:32px;background:var(--surface);
+  border:none;border-radius:50%;color:var(--muted);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;margin-bottom:20px;flex-shrink:0;
+}
+.pw-close svg{width:14px;height:14px}
+.pw-icon{
+  width:80px;height:80px;border-radius:20px;
+  overflow:hidden;
+  margin:0 auto 16px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 28px rgba(0,0,0,0.4);
+}
+.pw-icon img{width:100%;height:100%;object-fit:cover}
+.pw-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;font-weight:700;
+  text-align:center;margin-bottom:18px;line-height:1.2;
+}
+.pw-review{
+  background:var(--surface);border-radius:var(--radius);
+  padding:14px 16px;margin-bottom:14px;
+}
+.pw-review-app{font-size:13px;font-weight:700;margin-bottom:4px}
+.pw-stars{color:#ED9434;font-size:14px;letter-spacing:2px;margin-bottom:8px}
+.pw-review-text{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:6px;font-style:italic}
+.pw-review-author{font-size:11px;color:var(--muted);opacity:0.6;font-style:italic}
+.pw-plan-best{
+  border:2px solid var(--accent);border-radius:var(--radius);
+  overflow:hidden;margin-bottom:8px;cursor:pointer;
+  transition:border-color 0.15s,background 0.15s;
+}
+.pw-plan-best.selected{background:var(--accent-soft)}
+.pw-plan-best:active{opacity:0.85}
+.pw-best-label{
+  background:var(--accent);color:white;
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;
+  padding:5px 16px;text-align:center;
+}
+.pw-plan-inner{padding:14px 16px}
+.pw-plan{
+  background:var(--surface);border:2px solid var(--separator);
+  border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;
+  cursor:pointer;transition:border-color 0.15s,background 0.15s;
+}
+.pw-plan.selected{border-color:var(--accent);background:var(--accent-soft)}
+.pw-plan:active{opacity:0.85}
+.pw-plan-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pw-plan-name{font-size:14px;font-weight:600;margin-bottom:3px}
+.pw-discount{color:var(--accent)}
+.pw-plan-sub{font-size:12px;color:var(--muted)}
+.pw-plan-price{font-size:16px;font-weight:700;color:var(--text);white-space:nowrap;text-align:right;flex-shrink:0}
+.pw-plan-price-sub{font-size:11px;color:var(--muted);font-weight:400;text-align:right;margin-top:2px}
+.pw-spacer{flex:1}
+.pw-cta{
+  width:100%;padding:15px;
+  background:var(--accent);border:none;border-radius:50px;
+  color:white;font-size:16px;font-weight:600;
+  font-family:'Figtree',sans-serif;cursor:pointer;
+  box-shadow:0 4px 20px rgba(33,156,232,0.4);
+  margin-bottom:14px;transition:opacity 0.15s,transform 0.1s;
+}
+.pw-cta:active{transform:scale(0.98)}
+.pw-links{display:flex;gap:16px;justify-content:center;font-size:11px;color:var(--muted)}
+.pw-links span{cursor:pointer}
+.pw-links span:active{opacity:0.6}
 
 /* ── Toast ── */
 #toast{
@@ -504,6 +767,7 @@ body{
   <div class="tab-content" id="tab-auftraege"></div>
   <div class="tab-content" id="tab-rechnungen"></div>
   <div class="tab-content" id="tab-termine"></div>
+  <div class="tab-content" id="tab-einstellungen"></div>
 
   <!-- FAB -->
   <button class="fab hidden" id="fab" onclick="fabAction()">
@@ -532,7 +796,44 @@ body{
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       <span class="nav-label">Termine</span>
     </button>
+    <button class="nav-item" data-tab="einstellungen" onclick="switchTab('einstellungen')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span class="nav-label">Einst.</span>
+    </button>
   </nav>
+
+  <!-- KI-Chat-Assistent -->
+  <button class="chat-launcher" id="chat-launcher" onclick="toggleChat()" aria-label="KI-Assistent öffnen">
+    <span class="chat-dot"></span>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+  </button>
+
+  <div class="chat-panel" id="chat-panel" role="dialog" aria-label="KI-Assistent">
+    <div class="chat-head">
+      <div class="chat-avatar">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v1H7a4 4 0 0 0-4 4v1a3 3 0 0 0 0 6v0a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v0a3 3 0 0 0 0-6v-1a4 4 0 0 0-4-4h-2V5a3 3 0 0 0-3-3z"/><circle cx="9" cy="13" r="1"/><circle cx="15" cy="13" r="1"/></svg>
+      </div>
+      <div>
+        <div class="chat-title">CraftIQ Assistent</div>
+        <div class="chat-sub">Online</div>
+      </div>
+      <button class="chat-close" onclick="toggleChat()" aria-label="Schließen">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="chat-body" id="chat-body"></div>
+    <div class="chat-chips" id="chat-chips">
+      <button class="chat-chip" onclick="chatAsk('Wie viele offene Rechnungen habe ich?')">Offene Rechnungen?</button>
+      <button class="chat-chip" onclick="chatAsk('Wie hoch ist mein Umsatz?')">Umsatz?</button>
+      <button class="chat-chip" onclick="chatAsk('Wie erstelle ich ein Angebot mit KI?')">Angebot mit KI?</button>
+    </div>
+    <div class="chat-foot">
+      <textarea id="chat-input" rows="1" placeholder="Frag den Assistenten..." onkeydown="chatKey(event)" oninput="chatGrow(this)"></textarea>
+      <button class="chat-send" id="chat-send" onclick="sendChat()" aria-label="Senden">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- ─────────── MODALS ─────────── -->
@@ -704,65 +1005,51 @@ body{
 </div>
 
 <!-- Einstellungen -->
-<div class="modal-overlay" id="modal-settings" onclick="handleOverlayClick(event,'modal-settings')">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-header">
-      <div class="modal-title">Einstellungen</div>
-      <button class="modal-close" onclick="closeModal('modal-settings')">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+<div class="paywall-overlay" id="modal-paywall">
+  <div class="paywall-modal">
+    <button class="pw-close" onclick="closeModal('modal-paywall');switchTab('dashboard')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pw-icon">
+      <img src="icon.png" alt="CraftIQ">
     </div>
-    <div class="modal-body">
-      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:12px">Firmendaten (erscheinen auf PDF)</div>
-      <div class="form-group">
-        <label class="form-label">Firmenname</label>
-        <input class="form-input" id="settings-firma" placeholder="Schreinerei Mustermann GmbH">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Inhaber</label>
-        <input class="form-input" id="settings-inhaber" placeholder="Hans Mustermann">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Straße + Hausnummer</label>
-        <input class="form-input" id="settings-strasse" placeholder="Werkstattweg 5">
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">PLZ</label>
-          <input class="form-input" id="settings-plz" placeholder="80331">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Ort</label>
-          <input class="form-input" id="settings-ort" placeholder="München">
+    <div class="pw-title">Unlock full access</div>
+    <div class="pw-review">
+      <div class="pw-review-app">CraftIQ</div>
+      <div class="pw-stars">★★★★★</div>
+      <div class="pw-review-text">"Mit CraftIQ spare ich täglich Zeit beim Erstellen von Angeboten. Einfach, schnell, professionell."</div>
+      <div class="pw-review-author">— MaxHandwerk_München</div>
+    </div>
+    <div class="pw-plan-best selected" id="pw-yearly" onclick="selectPlan('yearly')">
+      <div class="pw-best-label">Best Value</div>
+      <div class="pw-plan-inner">
+        <div class="pw-plan-row">
+          <div>
+            <div class="pw-plan-name">Jährlich <span class="pw-discount">(40% Rabatt)</span></div>
+            <div class="pw-plan-sub">jährlich abgerechnet</div>
+          </div>
+          <div>
+            <div class="pw-plan-price">120 € / Mo</div>
+            <div class="pw-plan-price-sub">1.200 € / Jahr</div>
+          </div>
         </div>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Telefon</label>
-          <input class="form-input" id="settings-telefon" placeholder="+49 89 ...">
+    </div>
+    <div class="pw-plan" id="pw-monthly" onclick="selectPlan('monthly')">
+      <div class="pw-plan-row">
+        <div>
+          <div class="pw-plan-name">Monatlich</div>
+          <div class="pw-plan-sub">Kein Jahresvertrag</div>
         </div>
-        <div class="form-group">
-          <label class="form-label">E-Mail</label>
-          <input class="form-input" id="settings-email" placeholder="info@...">
-        </div>
+        <div class="pw-plan-price">200 € / Mo</div>
       </div>
-      <div class="form-group">
-        <label class="form-label">IBAN</label>
-        <input class="form-input" id="settings-iban" placeholder="DE89 7005 4306 ...">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Steuernummer</label>
-        <input class="form-input" id="settings-steuernr" placeholder="123/456/78901">
-      </div>
-      <div class="divider"></div>
-      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:12px">KI-Integration</div>
-      <div class="form-group">
-        <label class="form-label">OpenRouter API-Key</label>
-        <input class="form-input" id="settings-apikey" placeholder="sk-or-v1-..." type="password" autocomplete="off">
-        <div style="font-size:11px;color:var(--muted);margin-top:5px">Kostenlos unter openrouter.ai erstellen → „Free credit"</div>
-      </div>
-      <button class="btn btn-primary" onclick="saveSettings()">Speichern</button>
+    </div>
+    <div class="pw-spacer"></div>
+    <button class="pw-cta" onclick="toast('Kommt bald — bleib dran!')">Weiter</button>
+    <div class="pw-links">
+      <span>AGB</span>
+      <span>Datenschutz</span>
+      <span>Wiederherstellen</span>
     </div>
   </div>
 </div>
@@ -773,7 +1060,7 @@ body{
 // ═══════════════════════════════════════
 //  CONFIG
 // ═══════════════════════════════════════
-const AI_ENDPOINT = 'https://yyxnhwkdwcgpqajeknfe.supabase.co/functions/v1/craftiq-ai';
+const AI_ENDPOINT = 'https://zuvthbyvsjyhklpfoibq.supabase.co/functions/v1/craftiq-ai';
 
 // ═══════════════════════════════════════
 //  STORAGE
@@ -896,11 +1183,12 @@ function fabAction() {
 }
 
 function renderTab(tab) {
-  if (tab === 'dashboard')  renderDashboard();
+  if (tab === 'dashboard')       renderDashboard();
   else if (tab === 'kunden')     renderKunden();
   else if (tab === 'auftraege')  renderAuftraege();
   else if (tab === 'rechnungen') renderRechnungen();
   else if (tab === 'termine')    renderTermine();
+  else if (tab === 'einstellungen') renderEinstellungen();
 }
 
 // ═══════════════════════════════════════
@@ -1270,29 +1558,31 @@ function renderQuoteItemsTable() {
   const total = calcTotal(quoteItems);
   document.getElementById('quote-items-table').innerHTML = `
     ${quoteItems.length > 0 ? `
-      <table class="positions-table">
-        <thead><tr>
-          <th style="width:38%">Beschreibung</th>
-          <th style="width:14%;text-align:right">Menge</th>
-          <th style="width:14%">Einheit</th>
-          <th style="width:20%;text-align:right">EP (€)</th>
-          <th style="width:14%"></th>
-        </tr></thead>
-        <tbody>
-          ${quoteItems.map((item, i) => `
-            <tr>
-              <td><input value="${escHtml(item.beschreibung||'')}" onchange="updateQItem(${i},'beschreibung',this.value)" placeholder="Position..."></td>
-              <td style="text-align:right"><input value="${item.menge||''}" onchange="updateQItem(${i},'menge',this.value)" type="number" min="0" step="0.1" style="text-align:right"></td>
-              <td><input value="${escHtml(item.einheit||'Std')}" onchange="updateQItem(${i},'einheit',this.value)"></td>
-              <td style="text-align:right"><input value="${item.einzelpreis||''}" onchange="updateQItem(${i},'einzelpreis',this.value)" type="number" min="0" step="0.01" style="text-align:right"></td>
-              <td>
-                <button class="del-row-btn" onclick="removeQItem(${i})">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
-              </td>
-            </tr>`).join('')}
-        </tbody>
-      </table>
+      <div class="pos-list">
+        ${quoteItems.map((item, i) => `
+          <div class="pos-item">
+            <div class="pos-item-top">
+              <input class="pos-desc-input" value="${escHtml(item.beschreibung||'')}" onchange="updateQItem(${i},'beschreibung',this.value)" placeholder="Position beschreiben...">
+              <button class="del-row-btn" onclick="removeQItem(${i})" aria-label="Position löschen">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            <div class="pos-fields">
+              <div class="pos-field">
+                <label>Menge</label>
+                <input value="${item.menge||''}" onchange="updateQItem(${i},'menge',this.value)" type="number" inputmode="decimal" min="0" step="0.1">
+              </div>
+              <div class="pos-field">
+                <label>Einheit</label>
+                <input value="${escHtml(item.einheit||'Std')}" onchange="updateQItem(${i},'einheit',this.value)">
+              </div>
+              <div class="pos-field">
+                <label>EP (€)</label>
+                <input value="${item.einzelpreis||''}" onchange="updateQItem(${i},'einzelpreis',this.value)" type="number" inputmode="decimal" min="0" step="0.01">
+              </div>
+            </div>
+          </div>`).join('')}
+      </div>
       <div class="total-row">
         <span class="total-label">Gesamt (netto)</span>
         <span class="total-amount">${fmt(total)}</span>
@@ -1330,25 +1620,9 @@ async function generateWithAI() {
   btn.disabled = true;
 
   try {
-    const resp = await fetch(AI_ENDPOINT, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ description: desc }),
-    });
-
-    if (!resp.ok) throw new Error(`API Fehler ${resp.status}`);
-    const data    = await resp.json();
-    const content = data.content?.[0]?.text || '';
-
-    let items;
-    try {
-      const cleaned = content.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
-      const match   = cleaned.match(/\[[\s\S]*\]/);
-      items = JSON.parse(match ? match[0] : cleaned);
-      if (!Array.isArray(items)) throw new Error('Kein Array');
-    } catch {
-      throw new Error('KI-Antwort ungültig — bitte manuell eingeben');
-    }
+    // Minimal: kleine Anfrage an die App-KI. Bei Fehler -> lokale Positionen aus der Beschreibung.
+    let items = await fetchAIQuoteItems(desc);
+    if (!items || !items.length) items = localQuoteItems(desc);
 
     quoteItems = items.map(item => ({
       beschreibung: String(item.beschreibung || item.description || ''),
@@ -1366,11 +1640,241 @@ async function generateWithAI() {
 
   } catch (e) {
     console.error(e);
-    toast('Fehler: ' + e.message);
+    toast('Fehler beim Generieren — bitte manuell eingeben');
   } finally {
     btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Mit KI erstellen`;
     btn.disabled = false;
   }
+}
+
+// Kleine Anfrage an die App-KI. Gibt ein Positions-Array zurück oder null bei Fehler.
+async function fetchAIQuoteItems(desc) {
+  try {
+    const resp = await fetch(AI_ENDPOINT, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ description: desc }),
+    });
+    if (!resp.ok) return null;
+    const data    = await resp.json();
+    const content = (data.content?.[0]?.text || '').replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+    const match   = content.match(/\[[\s\S]*\]/);
+    const items   = JSON.parse(match ? match[0] : content);
+    return Array.isArray(items) && items.length ? items : null;
+  } catch {
+    return null;
+  }
+}
+
+// Lokaler Fallback: erzeugt plausible Handwerker-Positionen aus der Beschreibung.
+function localQuoteItems(desc) {
+  const t = desc.toLowerCase();
+  const items = [];
+  const add = (beschreibung, menge, einheit, einzelpreis) =>
+    items.push({ beschreibung, menge: Math.round(menge * 100) / 100, einheit, einzelpreis });
+
+  const numFor = re => { const m = t.match(re); return m ? parseFloat(m[1].replace(',', '.')) : null; };
+  const area  = numFor(/(\d+(?:[.,]\d+)?)\s*(?:qm|m²|m2|quadratmeter)/);
+  const lfm   = numFor(/(\d+(?:[.,]\d+)?)\s*(?:lfm|laufmeter)/);
+  const A = area || 20;       // Fläche, Default 20 m²
+  const L = lfm  || A * 0.8;  // Laufmeter, grob
+
+  if (/(maler|streich|anstrich|lackier|tapez|farbe|wand)/.test(t)) {
+    add('Untergrund vorbereiten, spachteln und grundieren', A, 'm²', 8.5);
+    add('Wand- und Deckenflächen streichen (2 Anstriche)', A, 'm²', 11);
+    add('Premium-Wandfarbe und Abdeckmaterial', Math.max(1, Math.ceil(A / 6)), 'Eimer', 34);
+  }
+  if (/(fliese|verflies|kachel)/.test(t)) {
+    add('Fliesen verlegen inkl. Zuschnitt', A, 'm²', 45);
+    add('Fliesenkleber, Fugenmasse und Silikon', 1, 'Pauschale', 95);
+    add('Verfugen und Endreinigung', A, 'm²', 9);
+  }
+  if (/(bad|badezimmer|dusche|wc|toilette|waschbecken|armatur|sanit)/.test(t)) {
+    add('Sanitärobjekte demontieren und entsorgen', 1, 'Pauschale', 120);
+    add('Sanitärobjekt montieren und anschließen', 2, 'Stk', 145);
+    add('Verbundabdichtung im Nassbereich', 1, 'Pauschale', 180);
+  }
+  if (/(elektr|steckdose|schalter|leitung|sicherung|strom|lampe|leucht)/.test(t)) {
+    add('Elektroinstallation, Leitungen verlegen', 6, 'Std', 62);
+    add('Steckdosen und Schalter setzen', 8, 'Stk', 24);
+    add('Installationsmaterial Elektro', 1, 'Pauschale', 140);
+  }
+  if (/(heizung|heizkörper|therme|heizkoerper)/.test(t)) {
+    add('Heizkörper liefern und montieren', 2, 'Stk', 230);
+    add('Anschluss an Heizungssystem', 4, 'Std', 62);
+  }
+  if (/(boden|laminat|parkett|vinyl|teppich|estrich|dielen)/.test(t)) {
+    add('Bodenbelag verlegen inkl. Zuschnitt', A, 'm²', 28);
+    add('Trittschalldämmung verlegen', A, 'm²', 6.5);
+    add('Sockelleisten montieren', L, 'lfm', 8);
+  }
+  if (/(trockenbau|rigips|gipskarton|ständerwerk|staenderwerk|decke abhäng)/.test(t)) {
+    add('Trockenbauwand inkl. Ständerwerk und Beplankung', A, 'm²', 42);
+    add('Verspachteln und schleifen (Q3)', A, 'm²', 9);
+    add('Trockenbaumaterial und Befestigung', 1, 'Pauschale', 130);
+  }
+  if (/(dach|ziegel|dachrinne|dachdeck)/.test(t)) {
+    add('Dachdeckerarbeiten inkl. Eindeckung', A, 'm²', 65);
+    add('Gerüststellung und Sicherung', 1, 'Pauschale', 480);
+  }
+  if (/(fenster)/.test(t)) {
+    add('Fenster liefern und fachgerecht einbauen', 2, 'Stk', 520);
+    add('Anschlussabdichtung und Verputzen der Leibung', 2, 'Stk', 75);
+  }
+  if (/(tür|tuer|zarge|türen)/.test(t)) {
+    add('Innentür inkl. Zarge liefern und montieren', 2, 'Stk', 290);
+  }
+  if (/(garten|rasen|hecke|baum|pflanz|grün|gruen)/.test(t)) {
+    add('Gartenarbeiten / Grünpflege', 8, 'Std', 48);
+    add('Grünschnitt-Entsorgung', 1, 'Pauschale', 90);
+  }
+  if (/(pflaster|einfahrt|terrasse|gehweg|wege)/.test(t)) {
+    add('Pflasterarbeiten inkl. Verlegung', A, 'm²', 55);
+    add('Unterbau, Schotter und Splitt', A, 'm²', 18);
+  }
+  if (/(putz|verputz|fassade)/.test(t)) {
+    add('Putzarbeiten auftragen und abziehen', A, 'm²', 26);
+    add('Putzmaterial und Armierung', 1, 'Pauschale', 160);
+  }
+  if (/(dämm|daemm|isolier|wärmedämm|waermedaemm)/.test(t)) {
+    add('Dämmung anbringen', A, 'm²', 38);
+    add('Dämmmaterial', 1, 'Pauschale', 210);
+  }
+
+  // Wenn kein Gewerk erkannt: generische Positionen
+  if (!items.length) {
+    add('Arbeitsstunden Facharbeiter', 8, 'Std', 58);
+    add('Materialpauschale', 1, 'Pauschale', 150);
+  }
+
+  // Immer dabei
+  add('An- und Abfahrt / Baustelleneinrichtung', 1, 'Pauschale', 49);
+  return items;
+}
+
+/* ───────── KI-Chat-Assistent ───────── */
+let chatStarted = false;
+
+function toggleChat() {
+  const panel = document.getElementById('chat-panel');
+  const app   = document.getElementById('app');
+  const open  = panel.classList.toggle('open');
+  app.classList.toggle('chat-open', open);
+  if (open) {
+    if (!chatStarted) {
+      chatStarted = true;
+      addChatMsg('Hi! Ich bin dein CraftIQ Assistent 👋\nFrag mich z.B. nach offenen Rechnungen, deinem Umsatz oder wie du etwas anlegst.', 'bot');
+    }
+    setTimeout(() => document.getElementById('chat-input').focus(), 250);
+  }
+}
+
+function chatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+function chatGrow(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 88) + 'px';
+}
+function chatAsk(q) {
+  document.getElementById('chat-input').value = q;
+  sendChat();
+}
+
+function addChatMsg(text, role) {
+  const body = document.getElementById('chat-body');
+  const div  = document.createElement('div');
+  div.className = 'chat-msg ' + role;
+  div.textContent = text;
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+  return div;
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const q = input.value.trim();
+  if (!q) return;
+  addChatMsg(q, 'user');
+  input.value = '';
+  input.style.height = 'auto';
+  document.getElementById('chat-chips').style.display = 'none';
+
+  const body = document.getElementById('chat-body');
+  const typing = document.createElement('div');
+  typing.className = 'chat-typing';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+  body.appendChild(typing);
+  body.scrollTop = body.scrollHeight;
+
+  const reply = await getChatReply(q);
+  typing.remove();
+  addChatMsg(reply, 'bot');
+}
+
+async function getChatReply(q) {
+  // Minimal: kleine Anfrage an die App-KI. Bei Fehler -> lokale Antwort aus echten Daten.
+  try {
+    const resp = await fetch(AI_ENDPOINT, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ description: q }),
+    });
+    if (!resp.ok) throw new Error('status');
+    const data = await resp.json();
+    const text = (data.content?.[0]?.text || '').trim();
+    // Edge Function ist auf Angebots-JSON getrimmt -> JSON-Antworten verwerfen, lokal antworten.
+    if (!text || text.startsWith('[') || text.startsWith('{')) return localChatReply(q);
+    return text;
+  } catch {
+    return localChatReply(q);
+  }
+}
+
+function localChatReply(q) {
+  const t = q.toLowerCase();
+  const customers = store.get('customers');
+  const quotes    = store.get('quotes');
+  const invoices  = store.get('invoices');
+  const appts     = store.get('appointments');
+  const eur = n => n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+
+  if (/(hallo|hi|hey|servus|moin|guten)/.test(t))
+    return 'Hallo! Wie kann ich helfen? Frag mich nach Kunden, Aufträgen, Rechnungen oder Umsatz.';
+
+  if (/offen/.test(t) && /rechnung/.test(t)) {
+    const offen = invoices.filter(i => i.status === 'offen');
+    const sum = offen.reduce((s, i) => s + (i.amount || 0), 0);
+    return offen.length
+      ? `Du hast ${offen.length} offene Rechnung${offen.length === 1 ? '' : 'en'} über zusammen ${eur(sum)}.`
+      : 'Aktuell sind keine Rechnungen offen ✓';
+  }
+  if (/umsatz|verdient|eingenommen|einnahmen/.test(t)) {
+    const bezahlt = invoices.filter(i => i.status === 'bezahlt').reduce((s, i) => s + (i.amount || 0), 0);
+    return `Dein bezahlter Umsatz liegt bei ${eur(bezahlt)}.`;
+  }
+  if (/rechnung/.test(t) && /(wie|erstell|anleg|schreib)/.test(t))
+    return 'Rechnungen entstehen aus angenommenen Aufträgen: Tab "Aufträge" → Auftrag auf "Angenommen" setzen → "Rechnung erstellen". Im Tab "Rechnungen" markierst du sie als bezahlt.';
+  if (/rechnung/.test(t)) {
+    const offen = invoices.filter(i => i.status === 'offen').length;
+    return `Du hast ${invoices.length} Rechnung${invoices.length === 1 ? '' : 'en'} insgesamt, davon ${offen} offen.`;
+  }
+
+  if (/(angebot|auftrag|kostenvoranschlag|kva)/.test(t) && /(ki|ai|automat)/.test(t))
+    return 'Tab "Aufträge" → "+" → beschreibe den Auftrag in eigenen Worten → "Mit KI erstellen". Die KI generiert dir die Positionen mit Mengen und Preisen, die du danach anpassen kannst.';
+  if (/(angebot|auftrag|kostenvoranschlag|kva)/.test(t))
+    return `Du hast ${quotes.length} Auftrag${quotes.length === 1 ? '' : 'e'} angelegt. Neuen erstellst du im Tab "Aufträge" über das "+".`;
+
+  if (/kunde/.test(t))
+    return `Du hast ${customers.length} Kunde${customers.length === 1 ? '' : 'n'}. Neue legst du im Tab "Kunden" über das "+" an.`;
+
+  if (/termin|kalender/.test(t))
+    return `Du hast ${appts.length} Termin${appts.length === 1 ? '' : 'e'} geplant. Neue planst du im Tab "Termine".`;
+
+  if (/(was kann|hilfe|funktion|features?|was machst)/.test(t))
+    return 'Ich helfe dir rund um CraftIQ: Kunden verwalten, Angebote per KI erstellen, Rechnungen tracken und Termine planen. Frag mich z.B. "Wie viele offene Rechnungen?" oder "Wie erstelle ich ein Angebot mit KI?".';
+
+  return 'Das kann ich gerade nicht sicher beantworten. Frag mich z.B. nach offenen Rechnungen, deinem Umsatz, Kunden, Terminen oder wie du ein Angebot mit KI erstellst.';
 }
 
 function saveQuote() {
@@ -1425,27 +1929,18 @@ function openQuoteDetail(quoteId) {
     ${q.description ? `<p style="font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:14px">${escHtml(q.description)}</p>` : ''}
     ${q.items && q.items.length > 0 ? `
       <div class="divider"></div>
-      <table class="positions-table" style="pointer-events:none">
-        <thead><tr>
-          <th>Beschreibung</th>
-          <th style="text-align:right">Menge</th>
-          <th>Einheit</th>
-          <th style="text-align:right">EP</th>
-          <th style="text-align:right">Gesamt</th>
-        </tr></thead>
-        <tbody>
-          ${q.items.map(item => {
-            const pos = (parseFloat(item.menge)||0) * (parseFloat(item.einzelpreis)||0);
-            return `<tr>
-              <td>${escHtml(item.beschreibung||'')}</td>
-              <td style="text-align:right">${item.menge}</td>
-              <td>${escHtml(item.einheit||'')}</td>
-              <td style="text-align:right">${(parseFloat(item.einzelpreis)||0).toFixed(2)} €</td>
-              <td style="text-align:right">${pos.toFixed(2)} €</td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
+      <div class="pos-readonly">
+        ${q.items.map(item => {
+          const pos = (parseFloat(item.menge)||0) * (parseFloat(item.einzelpreis)||0);
+          return `<div class="pos-line">
+            <div class="pos-line-main">
+              <div class="pos-line-desc">${escHtml(item.beschreibung||'')}</div>
+              <div class="pos-line-meta">${item.menge} ${escHtml(item.einheit||'')} × ${(parseFloat(item.einzelpreis)||0).toFixed(2)} €</div>
+            </div>
+            <div class="pos-line-total">${pos.toFixed(2)} €</div>
+          </div>`;
+        }).join('')}
+      </div>
       <div class="total-row">
         <span class="total-label">Gesamt (netto)</span>
         <span class="total-amount">${fmt(q.total||0)}</span>
@@ -1626,18 +2121,88 @@ function deleteAppointment() {
 //  SETTINGS
 // ═══════════════════════════════════════
 function openSettings() {
+  switchTab('einstellungen');
+}
+
+function openPaywall() {
+  openModal('modal-paywall');
+  selectPlan('yearly');
+}
+
+function selectPlan(plan) {
+  const yearly  = document.getElementById('pw-yearly');
+  const monthly = document.getElementById('pw-monthly');
+  if (!yearly || !monthly) return;
+  yearly.classList.toggle('selected', plan === 'yearly');
+  monthly.classList.toggle('selected', plan === 'monthly');
+}
+
+function renderEinstellungen() {
   const s = store.get('settings', {});
-  document.getElementById('settings-firma').value    = s.firma        || '';
-  document.getElementById('settings-inhaber').value  = s.inhaber      || '';
-  document.getElementById('settings-strasse').value  = s.strasse      || '';
-  document.getElementById('settings-plz').value      = s.plz          || '';
-  document.getElementById('settings-ort').value      = s.ort          || '';
-  document.getElementById('settings-telefon').value  = s.telefon      || '';
-  document.getElementById('settings-email').value    = s.email        || '';
-  document.getElementById('settings-iban').value     = s.iban         || '';
-  document.getElementById('settings-steuernr').value = s.steuernummer || '';
-  document.getElementById('settings-apikey').value   = s.api_key      || '';
-  openModal('modal-settings');
+  document.getElementById('tab-einstellungen').innerHTML = `
+    <button class="upgrade-banner" onclick="openPaywall()">
+      <div class="upgrade-banner-left">
+        <div class="upgrade-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div>
+          <div class="upgrade-banner-title">Upgrade zu Pro</div>
+          <div class="upgrade-banner-sub">Unbegrenzte Kunden, KI & mehr</div>
+        </div>
+      </div>
+      <div class="upgrade-banner-arrow">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </button>
+    <div class="section-header">
+      <div class="section-title">Firmendaten</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Firmenname</label>
+      <input class="form-input" id="settings-firma" placeholder="Mustermann GmbH" value="${s.firma||''}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Inhaber</label>
+      <input class="form-input" id="settings-inhaber" placeholder="Max Mustermann" value="${s.inhaber||''}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Straße</label>
+      <input class="form-input" id="settings-strasse" placeholder="Musterstraße 1" value="${s.strasse||''}">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">PLZ</label>
+        <input class="form-input" id="settings-plz" placeholder="80331" value="${s.plz||''}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ort</label>
+        <input class="form-input" id="settings-ort" placeholder="München" value="${s.ort||''}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Telefon</label>
+        <input class="form-input" id="settings-telefon" placeholder="+49 89 ..." value="${s.telefon||''}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">E-Mail</label>
+        <input class="form-input" id="settings-email" placeholder="info@firma.de" value="${s.email||''}">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">IBAN</label>
+      <input class="form-input" id="settings-iban" placeholder="DE89 ..." value="${s.iban||''}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Steuernummer</label>
+      <input class="form-input" id="settings-steuernr" placeholder="123/456/78901" value="${s.steuernummer||''}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">API-Key (optional)</label>
+      <input class="form-input" id="settings-apikey" placeholder="sk-..." value="${s.api_key||''}">
+    </div>
+    <button class="btn btn-primary" onclick="saveSettings()" style="margin-top:4px">Speichern</button>
+  `;
 }
 
 function saveSettings() {
@@ -1653,7 +2218,6 @@ function saveSettings() {
     steuernummer: document.getElementById('settings-steuernr').value.trim(),
     api_key:      document.getElementById('settings-apikey').value.trim(),
   });
-  closeModal('modal-settings');
   toast('Einstellungen gespeichert ✓');
 }
 
